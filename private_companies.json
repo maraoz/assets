@@ -1,202 +1,71 @@
 [
-  {
-    "name": "SpaceX",
-    "ticker": "SPACEX",
-    "domain": "spacex.com",
-    "valuation_usd": 350000000000,
-    "as_of": "2024-12-11",
-    "source": "tender offer reported by Bloomberg/CNBC"
-  },
-  {
-    "name": "OpenAI",
-    "ticker": "OPENAI",
-    "domain": "openai.com",
-    "valuation_usd": 500000000000,
-    "as_of": "2025-10-02",
-    "source": "secondary share sale"
-  },
-  {
-    "name": "Anthropic",
-    "ticker": "ANTHROPIC",
-    "domain": "anthropic.com",
-    "valuation_usd": 183000000000,
-    "as_of": "2025-09-02",
-    "source": "Series F led by ICONIQ"
-  },
-  {
-    "name": "ByteDance",
-    "ticker": "BYTEDANCE",
-    "domain": "bytedance.com",
-    "valuation_usd": 300000000000,
-    "as_of": "2024-12-15",
-    "source": "internal share buyback"
-  },
-  {
-    "name": "xAI",
-    "ticker": "XAI",
-    "domain": "x.ai",
-    "valuation_usd": 200000000000,
-    "as_of": "2025-12-05",
-    "source": "secondary tender reported by FT"
-  },
-  {
-    "name": "Stripe",
-    "ticker": "STRIPE",
-    "domain": "stripe.com",
-    "valuation_usd": 91500000000,
-    "as_of": "2025-02-26",
-    "source": "tender offer"
-  },
-  {
-    "name": "Databricks",
-    "ticker": "DATABRICKS",
-    "domain": "databricks.com",
-    "valuation_usd": 62000000000,
-    "as_of": "2024-12-17",
-    "source": "Series J"
-  },
-  {
-    "name": "Tether",
-    "ticker": "TETHER",
-    "domain": "tether.to",
-    "valuation_usd": 515000000000,
-    "as_of": "2025-09-25",
-    "source": "private placement reported by Bloomberg"
-  },
-  {
-    "name": "Revolut",
-    "ticker": "REVOLUT",
-    "domain": "revolut.com",
-    "valuation_usd": 75000000000,
-    "as_of": "2025-11-19",
-    "source": "secondary share sale"
-  },
-  {
-    "name": "Canva",
-    "ticker": "CANVA",
-    "domain": "canva.com",
-    "valuation_usd": 42000000000,
-    "as_of": "2025-04-30",
-    "source": "secondary share sale"
-  },
-  {
-    "name": "Anduril Industries",
-    "ticker": "ANDURIL",
-    "domain": "anduril.com",
-    "valuation_usd": 30500000000,
-    "as_of": "2025-06-05",
-    "source": "Series G"
-  },
-  {
-    "name": "Epic Games",
-    "ticker": "EPIC",
-    "domain": "epicgames.com",
-    "valuation_usd": 22500000000,
-    "as_of": "2025-02-27",
-    "source": "Disney investment"
-  },
-  {
-    "name": "Discord",
-    "ticker": "DISCORD",
-    "domain": "discord.com",
-    "valuation_usd": 14700000000,
-    "as_of": "2021-09-14",
-    "source": "Series H"
-  },
-  {
-    "name": "Fanatics",
-    "ticker": "FANATICS",
-    "domain": "fanatics.com",
-    "valuation_usd": 31000000000,
-    "as_of": "2024-12-19",
-    "source": "tender offer"
-  },
-  {
-    "name": "Shein",
-    "ticker": "SHEIN",
-    "domain": "shein.com",
-    "valuation_usd": 50000000000,
-    "as_of": "2024-08-05",
-    "source": "private placement reports"
-  },
-  {
-    "name": "Kraken",
-    "ticker": "KRAKEN",
-    "domain": "kraken.com",
-    "valuation_usd": 20000000000,
-    "as_of": "2025-10-24",
-    "source": "pre-IPO funding round"
-  },
-  {
-    "name": "Ripple",
-    "ticker": "RIPPLE",
-    "domain": "ripple.com",
-    "valuation_usd": 40000000000,
-    "as_of": "2025-11-04",
-    "source": "tender offer"
-  },
-  {
-    "name": "Rippling",
-    "ticker": "RIPPLING",
-    "domain": "rippling.com",
-    "valuation_usd": 16800000000,
-    "as_of": "2025-05-22",
-    "source": "Series G"
-  },
-  {
-    "name": "Chime",
-    "ticker": "CHIME",
-    "domain": "chime.com",
-    "valuation_usd": 25000000000,
-    "as_of": "2021-08-13",
-    "source": "Series G"
-  },
-  {
-    "name": "Cargill",
-    "ticker": "CARGILL",
-    "domain": "cargill.com",
-    "valuation_usd": 60000000000,
-    "as_of": "2024-01-01",
-    "source": "Forbes private company estimate"
-  },
-  {
-    "name": "Mars Inc.",
-    "ticker": "MARS",
-    "domain": "mars.com",
-    "valuation_usd": 100000000000,
-    "as_of": "2024-01-01",
-    "source": "Forbes private company estimate"
-  },
-  {
-    "name": "Koch Industries",
-    "ticker": "KOCH",
-    "domain": "kochind.com",
-    "valuation_usd": 125000000000,
-    "as_of": "2024-01-01",
-    "source": "Forbes private company estimate"
-  },
-  {
-    "name": "IKEA (Ingka)",
-    "ticker": "IKEA",
-    "domain": "ikea.com",
-    "valuation_usd": 60000000000,
-    "as_of": "2024-01-01",
-    "source": "Forbes private company estimate"
-  },
-  {
-    "name": "Bloomberg LP",
-    "ticker": "BLOOMBERG",
-    "domain": "bloomberg.com",
-    "valuation_usd": 60000000000,
-    "as_of": "2024-01-01",
-    "source": "Forbes private company estimate"
-  },
-  {
-    "name": "Thinking Machines Lab",
-    "ticker": "TML",
-    "domain": "thinkingmachines.ai",
-    "valuation_usd": 12000000000,
-    "as_of": "2025-07-15",
-    "source": "seed round reported by The Information"
-  }
+  { "name": "Tether", "ticker": "TETHER", "domain": "tether.to", "valuation_usd": 515000000000, "as_of": "2025-09-25", "source": "private placement reported by Bloomberg" },
+  { "name": "OpenAI", "ticker": "OPENAI", "domain": "openai.com", "valuation_usd": 500000000000, "as_of": "2025-10-02", "source": "secondary share sale" },
+  { "name": "SpaceX", "ticker": "SPACEX", "domain": "spacex.com", "valuation_usd": 350000000000, "as_of": "2024-12-11", "source": "tender offer reported by Bloomberg/CNBC" },
+  { "name": "ByteDance", "ticker": "BYTEDANCE", "domain": "bytedance.com", "valuation_usd": 300000000000, "as_of": "2024-12-15", "source": "internal share buyback" },
+  { "name": "xAI", "ticker": "XAI", "domain": "x.ai", "valuation_usd": 200000000000, "as_of": "2025-12-05", "source": "secondary tender reported by FT" },
+  { "name": "Anthropic", "ticker": "ANTHROPIC", "domain": "anthropic.com", "valuation_usd": 183000000000, "as_of": "2025-09-02", "source": "Series F led by ICONIQ" },
+  { "name": "Huawei", "ticker": "HUAWEI", "domain": "huawei.com", "valuation_usd": 150000000000, "as_of": "2024-12-31", "source": "estimate based on disclosed revenue and peer multiples" },
+  { "name": "Koch Industries", "ticker": "KOCH", "domain": "kochind.com", "valuation_usd": 125000000000, "as_of": "2024-01-01", "source": "Forbes private company estimate" },
+  { "name": "Mars Inc.", "ticker": "MARS", "domain": "mars.com", "valuation_usd": 100000000000, "as_of": "2024-01-01", "source": "Forbes private company estimate" },
+  { "name": "State Farm", "ticker": "STATEFARM", "domain": "statefarm.com", "valuation_usd": 100000000000, "as_of": "2024-12-31", "source": "Forbes — mutual insurer, surplus-based estimate" },
+  { "name": "Binance", "ticker": "BINANCE", "domain": "binance.com", "valuation_usd": 100000000000, "as_of": "2025-12-31", "source": "estimate based on token holdings + exchange peer multiples" },
+  { "name": "Stripe", "ticker": "STRIPE", "domain": "stripe.com", "valuation_usd": 91500000000, "as_of": "2025-02-26", "source": "tender offer" },
+  { "name": "Fidelity Investments", "ticker": "FIDELITY", "domain": "fidelity.com", "valuation_usd": 80000000000, "as_of": "2024-12-31", "source": "private partnership estimate" },
+  { "name": "Boehringer Ingelheim", "ticker": "BOEHRINGER", "domain": "boehringer-ingelheim.com", "valuation_usd": 80000000000, "as_of": "2024-12-31", "source": "Forbes — German pharma, family-owned" },
+  { "name": "Revolut", "ticker": "REVOLUT", "domain": "revolut.com", "valuation_usd": 75000000000, "as_of": "2025-11-19", "source": "secondary share sale" },
+  { "name": "Databricks", "ticker": "DATABRICKS", "domain": "databricks.com", "valuation_usd": 62000000000, "as_of": "2024-12-17", "source": "Series J" },
+  { "name": "Citadel", "ticker": "CITADEL", "domain": "citadel.com", "valuation_usd": 60000000000, "as_of": "2025-06-30", "source": "estimate (Citadel + Citadel Securities combined)" },
+  { "name": "Bloomberg LP", "ticker": "BLOOMBERG", "domain": "bloomberg.com", "valuation_usd": 60000000000, "as_of": "2024-01-01", "source": "Forbes private company estimate" },
+  { "name": "Cargill", "ticker": "CARGILL", "domain": "cargill.com", "valuation_usd": 60000000000, "as_of": "2024-01-01", "source": "Forbes private company estimate" },
+  { "name": "IKEA (Ingka)", "ticker": "IKEA", "domain": "ikea.com", "valuation_usd": 60000000000, "as_of": "2024-01-01", "source": "Forbes private company estimate" },
+  { "name": "Schwarz Gruppe (Lidl)", "ticker": "SCHWARZ", "domain": "lidl.com", "valuation_usd": 55000000000, "as_of": "2024-12-31", "source": "estimate from Lidl/Kaufland revenue" },
+  { "name": "Aldi (Nord + Süd)", "ticker": "ALDI", "domain": "aldi-nord.de", "valuation_usd": 50000000000, "as_of": "2024-12-31", "source": "estimate from disclosed revenue" },
+  { "name": "Shein", "ticker": "SHEIN", "domain": "shein.com", "valuation_usd": 50000000000, "as_of": "2024-08-05", "source": "private placement reports" },
+  { "name": "Canva", "ticker": "CANVA", "domain": "canva.com", "valuation_usd": 42000000000, "as_of": "2025-04-30", "source": "secondary share sale" },
+  { "name": "Cox Enterprises", "ticker": "COX", "domain": "coxenterprises.com", "valuation_usd": 40000000000, "as_of": "2024-12-31", "source": "Forbes private company estimate" },
+  { "name": "Ripple", "ticker": "RIPPLE", "domain": "ripple.com", "valuation_usd": 40000000000, "as_of": "2025-11-04", "source": "tender offer" },
+  { "name": "Wiz", "ticker": "WIZ", "domain": "wiz.io", "valuation_usd": 32000000000, "as_of": "2024-07-15", "source": "Google acquisition agreement" },
+  { "name": "Safe Superintelligence (SSI)", "ticker": "SSI", "domain": "ssi.inc", "valuation_usd": 32000000000, "as_of": "2025-04-12", "source": "Series B reported by Reuters" },
+  { "name": "Fanatics", "ticker": "FANATICS", "domain": "fanatics.com", "valuation_usd": 31000000000, "as_of": "2024-12-19", "source": "tender offer" },
+  { "name": "Anduril Industries", "ticker": "ANDURIL", "domain": "anduril.com", "valuation_usd": 30500000000, "as_of": "2025-06-05", "source": "Series G" },
+  { "name": "Vitol", "ticker": "VITOL", "domain": "vitol.com", "valuation_usd": 30000000000, "as_of": "2024-12-31", "source": "Forbes — commodities trading firm" },
+  { "name": "Bechtel", "ticker": "BECHTEL", "domain": "bechtel.com", "valuation_usd": 30000000000, "as_of": "2024-12-31", "source": "Forbes private company estimate" },
+  { "name": "Chime", "ticker": "CHIME", "domain": "chime.com", "valuation_usd": 25000000000, "as_of": "2021-08-13", "source": "Series G" },
+  { "name": "Trafigura", "ticker": "TRAFIGURA", "domain": "trafigura.com", "valuation_usd": 25000000000, "as_of": "2024-12-31", "source": "Forbes — commodities trading firm" },
+  { "name": "Epic Games", "ticker": "EPIC", "domain": "epicgames.com", "valuation_usd": 22500000000, "as_of": "2025-02-27", "source": "Disney investment" },
+  { "name": "Jane Street", "ticker": "JANESTREET", "domain": "janestreet.com", "valuation_usd": 20000000000, "as_of": "2024-12-31", "source": "estimate from Bloomberg/FT reporting" },
+  { "name": "Kraken", "ticker": "KRAKEN", "domain": "kraken.com", "valuation_usd": 20000000000, "as_of": "2025-10-24", "source": "pre-IPO funding round" },
+  { "name": "Bertelsmann", "ticker": "BERTELSMANN", "domain": "bertelsmann.com", "valuation_usd": 20000000000, "as_of": "2024-12-31", "source": "Forbes — German media conglomerate" },
+  { "name": "Reyes Holdings", "ticker": "REYES", "domain": "reyesholdings.com", "valuation_usd": 20000000000, "as_of": "2024-12-31", "source": "Forbes — beverage/food distribution" },
+  { "name": "Ferrero", "ticker": "FERRERO", "domain": "ferrero.com", "valuation_usd": 20000000000, "as_of": "2024-12-31", "source": "Forbes — Italian confectionary" },
+  { "name": "Rippling", "ticker": "RIPPLING", "domain": "rippling.com", "valuation_usd": 16800000000, "as_of": "2025-05-22", "source": "Series G" },
+  { "name": "Lego", "ticker": "LEGO", "domain": "lego.com", "valuation_usd": 15000000000, "as_of": "2024-12-31", "source": "Forbes — Danish toymaker, Kirk Kristiansen family" },
+  { "name": "Mercuria", "ticker": "MERCURIA", "domain": "mercuria.com", "valuation_usd": 15000000000, "as_of": "2024-12-31", "source": "Forbes — commodities trading" },
+  { "name": "Klarna", "ticker": "KLARNA", "domain": "klarna.com", "valuation_usd": 15000000000, "as_of": "2025-03-13", "source": "Reuters — secondary tender" },
+  { "name": "Hearst", "ticker": "HEARST", "domain": "hearst.com", "valuation_usd": 15000000000, "as_of": "2024-12-31", "source": "Forbes private media estimate" },
+  { "name": "Crypto.com", "ticker": "CRYPTOCOM", "domain": "crypto.com", "valuation_usd": 15000000000, "as_of": "2024-12-31", "source": "estimate based on previous funding" },
+  { "name": "Discord", "ticker": "DISCORD", "domain": "discord.com", "valuation_usd": 14700000000, "as_of": "2021-09-14", "source": "Series H" },
+  { "name": "Perplexity", "ticker": "PERPLEXITY", "domain": "perplexity.ai", "valuation_usd": 14000000000, "as_of": "2025-11-12", "source": "Series E reported by The Information" },
+  { "name": "Scale AI", "ticker": "SCALEAI", "domain": "scale.com", "valuation_usd": 13800000000, "as_of": "2024-05-21", "source": "Series F led by Accel" },
+  { "name": "Plaid", "ticker": "PLAID", "domain": "plaid.com", "valuation_usd": 13400000000, "as_of": "2025-04-09", "source": "Series E" },
+  { "name": "Ramp", "ticker": "RAMP", "domain": "ramp.com", "valuation_usd": 13000000000, "as_of": "2025-03-24", "source": "secondary tender" },
+  { "name": "Brex", "ticker": "BREX", "domain": "brex.com", "valuation_usd": 12000000000, "as_of": "2022-01-12", "source": "Series D-2" },
+  { "name": "Bridgewater Associates", "ticker": "BRIDGEWATER", "domain": "bridgewater.com", "valuation_usd": 12000000000, "as_of": "2024-12-31", "source": "estimate based on AUM and management-company valuation" },
+  { "name": "Thinking Machines Lab", "ticker": "TML", "domain": "thinkingmachines.ai", "valuation_usd": 12000000000, "as_of": "2025-07-15", "source": "seed round reported by The Information" },
+  { "name": "Notion", "ticker": "NOTION", "domain": "notion.so", "valuation_usd": 10000000000, "as_of": "2021-10-08", "source": "Series C" },
+  { "name": "Two Sigma", "ticker": "TWOSIGMA", "domain": "twosigma.com", "valuation_usd": 10000000000, "as_of": "2024-12-31", "source": "estimate based on AUM" },
+  { "name": "Cursor (Anysphere)", "ticker": "CURSOR", "domain": "cursor.com", "valuation_usd": 9000000000, "as_of": "2025-05-29", "source": "Series C reported by The Information" },
+  { "name": "Subway", "ticker": "SUBWAY", "domain": "subway.com", "valuation_usd": 9600000000, "as_of": "2023-08-24", "source": "Roark Capital acquisition" },
+  { "name": "Glean", "ticker": "GLEAN", "domain": "glean.com", "valuation_usd": 7200000000, "as_of": "2025-09-23", "source": "Series F" },
+  { "name": "Mistral AI", "ticker": "MISTRAL", "domain": "mistral.ai", "valuation_usd": 6000000000, "as_of": "2024-06-11", "source": "Series B" },
+  { "name": "Cohere", "ticker": "COHERE", "domain": "cohere.com", "valuation_usd": 5500000000, "as_of": "2024-07-22", "source": "Series D" },
+  { "name": "Hugging Face", "ticker": "HUGGINGFACE", "domain": "huggingface.co", "valuation_usd": 4500000000, "as_of": "2023-08-24", "source": "Series D" },
+  { "name": "Sierra", "ticker": "SIERRA", "domain": "sierra.ai", "valuation_usd": 4500000000, "as_of": "2024-10-23", "source": "Series B reported by The Information" },
+  { "name": "Mercury", "ticker": "MERCURY", "domain": "mercury.com", "valuation_usd": 3500000000, "as_of": "2025-03-25", "source": "Series C" },
+  { "name": "ElevenLabs", "ticker": "ELEVENLABS", "domain": "elevenlabs.io", "valuation_usd": 3300000000, "as_of": "2025-01-30", "source": "Series C" },
+  { "name": "Together AI", "ticker": "TOGETHER", "domain": "together.ai", "valuation_usd": 3300000000, "as_of": "2025-02-20", "source": "Series B" },
+  { "name": "Vercel", "ticker": "VERCEL", "domain": "vercel.com", "valuation_usd": 3250000000, "as_of": "2024-05-16", "source": "Series E" },
+  { "name": "Replit", "ticker": "REPLIT", "domain": "replit.com", "valuation_usd": 3000000000, "as_of": "2025-09-15", "source": "Series C reported by The Information" },
+  { "name": "Linear", "ticker": "LINEAR", "domain": "linear.app", "valuation_usd": 1250000000, "as_of": "2024-06-28", "source": "Series B" }
 ]

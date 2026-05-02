@@ -39,7 +39,9 @@
     font-size: 13px;
     user-select: none;
   }
-  main { padding: 12px 20px 60px; }
+  main { padding: 20px 48px 60px; }
+  header { padding: 14px 48px; }
+  footer { padding: 14px 48px; }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -57,17 +59,16 @@
   th:nth-child(1), th:nth-child(2),
   td:nth-child(1), td:nth-child(2) { text-align: left; }
   th:nth-child(1), td:nth-child(1) { width: 56px; }
-  th:nth-child(2), td:nth-child(2) {
-    width: 280px;
-    overflow: hidden;
-  }
+  th:nth-child(2), td:nth-child(2) { overflow: hidden; }
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4) { width: 110px; }
   th:nth-child(5), td:nth-child(5),
   th:nth-child(6), td:nth-child(6),
   th:nth-child(7), td:nth-child(7),
   th:nth-child(8), td:nth-child(8) { width: 80px; }
   td:nth-child(2) strong {
     display: inline-block;
-    max-width: 170px;
+    max-width: calc(100% - 130px);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -103,6 +104,12 @@
     margin-right: 8px;
   }
   .icon[data-fallback] { display: none; }
+  .casa-logo {
+    width: 14px;
+    height: 14px;
+    vertical-align: -3px;
+    margin-left: 4px;
+  }
   .cat-tag {
     display: inline-block;
     margin-left: 6px;
@@ -114,18 +121,33 @@
     background: rgba(0,0,0,0.04);
     letter-spacing: 0.04em;
   }
-  .method-tag {
-    display: inline-block;
-    margin-left: 4px;
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 10px;
-    background: rgba(0,0,0,0.06);
+  .method-icon {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 6px;
     color: var(--muted);
+    cursor: help;
   }
+  .method-icon svg { display: block; }
   .pos { color: var(--pos); }
   .neg { color: var(--neg); }
   .muted { color: var(--muted); }
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: 0;
+    cursor: help;
+  }
+  .live-dot.ok  { background: var(--pos); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); animation: pulse 2s infinite; }
+  .live-dot.err { background: var(--neg); }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
+    70%  { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  }
   footer {
     padding: 12px 20px;
     border-top: 1px solid var(--border);
@@ -171,12 +193,13 @@
 </main>
 <footer>
   <span id="status">Loading…</span>
-  <span>Powered by CoinGecko · Yahoo Finance · Savills · SIFMA</span>
+  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz <img src="/icons/casa-araoz.png" alt="" class="casa-logo"></a></span>
 </footer>
 <script>
 const state = {
   assets: [],
   lastUpdated: 0,
+  connected: true,
   sortKey: "market_cap_usd",
   sortDir: -1,
   filters: { public: true, private: true, crypto: true, commodity: true, fiat: true, misc: true },
@@ -208,7 +231,7 @@ const fmtPct = (v) => {
 
 const catLabel = {
   public: "public", private: "private", crypto: "crypto",
-  commodity: "commodity", fiat: "fiat", misc: "misc",
+  commodity: "commodity", fiat: "fiat M2", misc: "misc",
 };
 
 function render() {
@@ -218,8 +241,8 @@ function render() {
   visible.sort((a, b) => {
     const av = a[key];
     const bv = b[key];
-    const aNull = av === null || av === undefined || !isFinite(av);
-    const bNull = bv === null || bv === undefined || !isFinite(bv);
+    const aNull = av === null || av === undefined || (typeof av === "number" && !isFinite(av));
+    const bNull = bv === null || bv === undefined || (typeof bv === "number" && !isFinite(bv));
     if (aNull && bNull) return 0;
     if (aNull) return 1;
     if (bNull) return -1;
@@ -230,7 +253,7 @@ function render() {
   });
 
   const rows = visible.map((a, i) => {
-    const methodTag = a.method ? `<span class="method-tag">${a.method}</span>` : "";
+    const methodTag = methodIcon(a.method);
     const iconImg = a.icon_url
       ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
       : "";
@@ -258,6 +281,25 @@ function render() {
   updateStatus();
 }
 
+function methodIcon(method) {
+  if (method === "stock") {
+    return `<span class="method-icon" title="Above-ground stock × spot price (accumulated, durable)" aria-label="stock">`
+      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">`
+      + `<rect x="3" y="11" width="10" height="2" rx="0.5"/>`
+      + `<rect x="4" y="8" width="8" height="2" rx="0.5"/>`
+      + `<rect x="5" y="5" width="6" height="2" rx="0.5"/>`
+      + `</svg></span>`;
+  }
+  if (method === "flow") {
+    return `<span class="method-icon" title="One year's global production × spot price (annual flow)" aria-label="flow">`
+      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">`
+      + `<path d="M12.5 8 a4.5 4.5 0 1 1 -1.4 -3.2"/>`
+      + `<path d="M12.5 3 L12.5 5.5 L10 5.5" stroke-linejoin="round"/>`
+      + `</svg></span>`;
+  }
+  return "";
+}
+
 function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
@@ -279,9 +321,16 @@ function updateSortIndicators() {
 
 function updateStatus() {
   const el = document.getElementById("status");
-  if (!state.lastUpdated) { el.textContent = "Loading…"; return; }
+  if (!state.lastUpdated && state.connected) {
+    el.innerHTML = `<span class="live-dot ok" title="Connecting…"></span>Loading…`;
+    return;
+  }
   const ago = Math.max(0, Math.round(Date.now() / 1000 - state.lastUpdated));
-  el.textContent = `Updated ${ago}s ago · ${state.assets.length} assets`;
+  if (state.connected) {
+    el.innerHTML = `<span class="live-dot ok" title="Live — server reachable, last update ${ago}s ago"></span>${state.assets.length} assets`;
+  } else {
+    el.innerHTML = `<span class="live-dot err" title="Lost connection to server — showing last known data from ${ago}s ago"></span>${state.assets.length} assets`;
+  }
 }
 
 document.querySelectorAll("#head th").forEach(th => {
@@ -304,12 +353,16 @@ document.querySelectorAll("#filters input").forEach(el => {
 async function refresh() {
   try {
     const r = await fetch("/api/assets");
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     state.assets = data.assets || [];
     state.lastUpdated = data.last_updated || 0;
+    state.connected = true;
     render();
   } catch (e) {
     console.error("fetch failed", e);
+    state.connected = false;
+    updateStatus();
   }
 }
 
