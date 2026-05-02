@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mixed Asset Tracker</title>
+<title>All Asset Tracker</title>
 <style>
   :root {
     --border: #e4e4e7;
@@ -20,20 +20,14 @@
     background: #fafafa;
   }
   header {
-    padding: 16px 20px;
+    padding: 12px 20px;
     border-bottom: 1px solid var(--border);
     background: #fff;
-  }
-  h1 {
-    margin: 0 0 8px;
-    font-size: 18px;
-    font-weight: 600;
   }
   .filters {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
-    margin-top: 8px;
   }
   .filters label {
     display: inline-flex;
@@ -42,13 +36,6 @@
     cursor: pointer;
     font-size: 13px;
     user-select: none;
-  }
-  .swatch {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border: 1px solid var(--border);
-    border-radius: 2px;
   }
   main { padding: 12px 20px 60px; }
   table {
@@ -65,6 +52,15 @@
   }
   th:nth-child(1), th:nth-child(2),
   td:nth-child(1), td:nth-child(2) { text-align: left; }
+  td:nth-child(2) { max-width: 360px; }
+  td:nth-child(2) strong {
+    display: inline-block;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
   th {
     background: #f4f4f5;
     font-weight: 600;
@@ -83,6 +79,15 @@
   tr.category-misc      { background: #eef3fb; }
   tr:hover td { filter: brightness(0.97); }
   .ticker { color: var(--muted); margin-left: 6px; font-size: 12px; }
+  .icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .icon[data-fallback] { display: none; }
   .cat-tag {
     display: inline-block;
     margin-left: 6px;
@@ -123,14 +128,13 @@
 </head>
 <body>
 <header>
-  <h1>Mixed Asset Tracker</h1>
   <div class="filters" id="filters">
-    <label><input type="checkbox" data-cat="public" checked><span class="swatch" style="background:#fff"></span>Public companies</label>
-    <label><input type="checkbox" data-cat="private" checked><span class="swatch" style="background:#f4f4f5"></span>Private companies</label>
-    <label><input type="checkbox" data-cat="crypto" checked><span class="swatch" style="background:#f5f0fa"></span>Crypto</label>
-    <label><input type="checkbox" data-cat="commodity" checked><span class="swatch" style="background:#fdf6dc"></span>Commodities</label>
-    <label><input type="checkbox" data-cat="fiat" checked><span class="swatch" style="background:#eef7ee"></span>Fiat (M2)</label>
-    <label><input type="checkbox" data-cat="misc" checked><span class="swatch" style="background:#eef3fb"></span>Other</label>
+    <label><input type="checkbox" data-cat="public" checked>Public companies</label>
+    <label><input type="checkbox" data-cat="private" checked>Private companies</label>
+    <label><input type="checkbox" data-cat="crypto" checked>Crypto</label>
+    <label><input type="checkbox" data-cat="commodity" checked>Commodities</label>
+    <label><input type="checkbox" data-cat="fiat" checked>Fiat (M2)</label>
+    <label><input type="checkbox" data-cat="misc" checked>Misc</label>
   </div>
 </header>
 <main>
@@ -189,7 +193,7 @@ const fmtPct = (v) => {
 
 const catLabel = {
   public: "public", private: "private", crypto: "crypto",
-  commodity: "commodity", fiat: "fiat", misc: "other",
+  commodity: "commodity", fiat: "fiat", misc: "misc",
 };
 
 function render() {
@@ -212,11 +216,14 @@ function render() {
 
   const rows = visible.map((a, i) => {
     const methodTag = a.method ? `<span class="method-tag">${a.method}</span>` : "";
+    const iconImg = a.icon_url
+      ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
+      : "";
     return `
       <tr class="category-${a.category}">
         <td>${i + 1}</td>
         <td>
-          <strong>${escapeHtml(a.name || "")}</strong>
+          ${iconImg}<strong>${escapeHtml(a.name || "")}</strong>
           <span class="ticker">${escapeHtml(a.ticker || "")}</span>
           <span class="cat-tag">${catLabel[a.category] || a.category}</span>
           ${methodTag}

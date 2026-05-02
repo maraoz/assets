@@ -1,156 +1,24 @@
 [
-  {
-    "name": "Chinese Yuan",
-    "ticker": "CNY",
-    "m2_usd": 45000000000000,
-    "as_of": "2026-01-31",
-    "source": "PBoC, converted at FX 7.20"
-  },
-  {
-    "name": "US Dollar",
-    "ticker": "USD",
-    "m2_usd": 22000000000000,
-    "as_of": "2026-01-31",
-    "source": "Federal Reserve H.6"
-  },
-  {
-    "name": "Euro",
-    "ticker": "EUR",
-    "m2_usd": 17500000000000,
-    "as_of": "2026-01-31",
-    "source": "ECB, converted at FX 1.08"
-  },
-  {
-    "name": "Japanese Yen",
-    "ticker": "JPY",
-    "m2_usd": 8500000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of Japan, converted at FX 150"
-  },
-  {
-    "name": "British Pound",
-    "ticker": "GBP",
-    "m2_usd": 4200000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of England, converted at FX 1.27"
-  },
-  {
-    "name": "Indian Rupee",
-    "ticker": "INR",
-    "m2_usd": 3000000000000,
-    "as_of": "2026-01-31",
-    "source": "Reserve Bank of India, converted at FX 83"
-  },
-  {
-    "name": "Korean Won",
-    "ticker": "KRW",
-    "m2_usd": 3000000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of Korea, converted at FX 1340"
-  },
-  {
-    "name": "Swiss Franc",
-    "ticker": "CHF",
-    "m2_usd": 1300000000000,
-    "as_of": "2026-01-31",
-    "source": "Swiss National Bank, converted at FX 0.88"
-  },
-  {
-    "name": "Canadian Dollar",
-    "ticker": "CAD",
-    "m2_usd": 1700000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of Canada, converted at FX 1.36"
-  },
-  {
-    "name": "Hong Kong Dollar",
-    "ticker": "HKD",
-    "m2_usd": 2100000000000,
-    "as_of": "2026-01-31",
-    "source": "HKMA, converted at FX 7.82"
-  },
-  {
-    "name": "Australian Dollar",
-    "ticker": "AUD",
-    "m2_usd": 1800000000000,
-    "as_of": "2026-01-31",
-    "source": "Reserve Bank of Australia, converted at FX 1.52"
-  },
-  {
-    "name": "Brazilian Real",
-    "ticker": "BRL",
-    "m2_usd": 1100000000000,
-    "as_of": "2026-01-31",
-    "source": "Banco Central do Brasil, converted at FX 5.00"
-  },
-  {
-    "name": "Russian Ruble",
-    "ticker": "RUB",
-    "m2_usd": 1200000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of Russia, converted at FX 90"
-  },
-  {
-    "name": "Taiwan Dollar",
-    "ticker": "TWD",
-    "m2_usd": 1900000000000,
-    "as_of": "2026-01-31",
-    "source": "Central Bank of Taiwan, converted at FX 31"
-  },
-  {
-    "name": "Mexican Peso",
-    "ticker": "MXN",
-    "m2_usd": 800000000000,
-    "as_of": "2026-01-31",
-    "source": "Banco de Mexico, converted at FX 17.5"
-  },
-  {
-    "name": "Singapore Dollar",
-    "ticker": "SGD",
-    "m2_usd": 700000000000,
-    "as_of": "2026-01-31",
-    "source": "MAS, converted at FX 1.34"
-  },
-  {
-    "name": "Thai Baht",
-    "ticker": "THB",
-    "m2_usd": 700000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank of Thailand, converted at FX 35"
-  },
-  {
-    "name": "South African Rand",
-    "ticker": "ZAR",
-    "m2_usd": 280000000000,
-    "as_of": "2026-01-31",
-    "source": "South African Reserve Bank, converted at FX 18"
-  },
-  {
-    "name": "Indonesian Rupiah",
-    "ticker": "IDR",
-    "m2_usd": 650000000000,
-    "as_of": "2026-01-31",
-    "source": "Bank Indonesia, converted at FX 15700"
-  },
-  {
-    "name": "Turkish Lira",
-    "ticker": "TRY",
-    "m2_usd": 450000000000,
-    "as_of": "2026-01-31",
-    "source": "CBRT, converted at FX 32"
-  },
-  {
-    "name": "Argentine Peso",
-    "ticker": "ARS",
-    "m2_usd": 80000000000,
-    "as_of": "2026-01-31",
-    "source": "BCRA, converted at FX 950"
-  },
-  {
-    "name": "Uruguayan Peso",
-    "ticker": "UYU",
-    "m2_usd": 25000000000,
-    "as_of": "2026-01-31",
-    "source": "Banco Central del Uruguay, converted at FX 39"
-  }
+  { "name": "Chinese Yuan",       "ticker": "CNY", "country_code": "cn", "m2_usd": 45000000000000, "as_of": "2026-01-31", "source": "PBoC, converted at FX 7.20" },
+  { "name": "US Dollar",          "ticker": "USD", "country_code": "us", "m2_usd": 22000000000000, "as_of": "2026-01-31", "source": "Federal Reserve H.6" },
+  { "name": "Euro",               "ticker": "EUR", "country_code": "eu", "m2_usd": 17500000000000, "as_of": "2026-01-31", "source": "ECB, converted at FX 1.08" },
+  { "name": "Japanese Yen",       "ticker": "JPY", "country_code": "jp", "m2_usd":  8500000000000, "as_of": "2026-01-31", "source": "Bank of Japan, converted at FX 150" },
+  { "name": "British Pound",      "ticker": "GBP", "country_code": "gb", "m2_usd":  4200000000000, "as_of": "2026-01-31", "source": "Bank of England, converted at FX 1.27" },
+  { "name": "Indian Rupee",       "ticker": "INR", "country_code": "in", "m2_usd":  3000000000000, "as_of": "2026-01-31", "source": "Reserve Bank of India, converted at FX 83" },
+  { "name": "Korean Won",         "ticker": "KRW", "country_code": "kr", "m2_usd":  3000000000000, "as_of": "2026-01-31", "source": "Bank of Korea, converted at FX 1340" },
+  { "name": "Swiss Franc",        "ticker": "CHF", "country_code": "ch", "m2_usd":  1300000000000, "as_of": "2026-01-31", "source": "Swiss National Bank, converted at FX 0.88" },
+  { "name": "Canadian Dollar",    "ticker": "CAD", "country_code": "ca", "m2_usd":  1700000000000, "as_of": "2026-01-31", "source": "Bank of Canada, converted at FX 1.36" },
+  { "name": "Hong Kong Dollar",   "ticker": "HKD", "country_code": "hk", "m2_usd":  2100000000000, "as_of": "2026-01-31", "source": "HKMA, converted at FX 7.82" },
+  { "name": "Australian Dollar", "ticker": "AUD", "country_code": "au", "m2_usd":  1800000000000, "as_of": "2026-01-31", "source": "Reserve Bank of Australia, converted at FX 1.52" },
+  { "name": "Brazilian Real",     "ticker": "BRL", "country_code": "br", "m2_usd":  1100000000000, "as_of": "2026-01-31", "source": "Banco Central do Brasil, converted at FX 5.00" },
+  { "name": "Russian Ruble",      "ticker": "RUB", "country_code": "ru", "m2_usd":  1200000000000, "as_of": "2026-01-31", "source": "Bank of Russia, converted at FX 90" },
+  { "name": "Taiwan Dollar",      "ticker": "TWD", "country_code": "tw", "m2_usd":  1900000000000, "as_of": "2026-01-31", "source": "Central Bank of Taiwan, converted at FX 31" },
+  { "name": "Mexican Peso",       "ticker": "MXN", "country_code": "mx", "m2_usd":   800000000000, "as_of": "2026-01-31", "source": "Banco de Mexico, converted at FX 17.5" },
+  { "name": "Singapore Dollar",   "ticker": "SGD", "country_code": "sg", "m2_usd":   700000000000, "as_of": "2026-01-31", "source": "MAS, converted at FX 1.34" },
+  { "name": "Thai Baht",          "ticker": "THB", "country_code": "th", "m2_usd":   700000000000, "as_of": "2026-01-31", "source": "Bank of Thailand, converted at FX 35" },
+  { "name": "South African Rand", "ticker": "ZAR", "country_code": "za", "m2_usd":   280000000000, "as_of": "2026-01-31", "source": "South African Reserve Bank, converted at FX 18" },
+  { "name": "Indonesian Rupiah",  "ticker": "IDR", "country_code": "id", "m2_usd":   650000000000, "as_of": "2026-01-31", "source": "Bank Indonesia, converted at FX 15700" },
+  { "name": "Turkish Lira",       "ticker": "TRY", "country_code": "tr", "m2_usd":   450000000000, "as_of": "2026-01-31", "source": "CBRT, converted at FX 32" },
+  { "name": "Argentine Peso",     "ticker": "ARS", "country_code": "ar", "m2_usd":    80000000000, "as_of": "2026-01-31", "source": "BCRA, converted at FX 950" },
+  { "name": "Uruguayan Peso",     "ticker": "UYU", "country_code": "uy", "m2_usd":    25000000000, "as_of": "2026-01-31", "source": "Banco Central del Uruguay, converted at FX 39" }
 ]

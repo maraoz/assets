@@ -7,6 +7,7 @@ import httpx
 from curl_cffi.requests import AsyncSession as CurlAsyncSession
 from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from tickers import SHARES_OUT, TICKERS
 
@@ -53,13 +54,35 @@ cache = {
     "stocks": {},
     "crypto_raw": [],
     "commodity_prices": {},
+    "fx_rates": {},  # ticker -> units of that currency per 1 USD
 }
 
 app = FastAPI()
 
+# Static icon files; downloaded by download_icons.py
+ICONS_DIR = ROOT / "icons"
+ICONS_DIR.mkdir(exist_ok=True)
+app.mount("/icons", StaticFiles(directory=str(ICONS_DIR)), name="icons")
+
+# Per-asset icon path with mtime-based cache buster.
+# Returns None when no file exists so the frontend can omit the <img>.
+def _icon_url(category: str, ticker: str) -> str | None:
+    p = ICONS_DIR / category / f"{ticker}.png"
+    if not p.exists():
+        return None
+    return f"/icons/{category}/{ticker}.png?v={int(p.stat().st_mtime)}"
+
 
 def load_json(name):
     return json.loads((ROOT / name).read_text())
+
+
+async def fetch_fx_rates():
+    url = "https://open.er-api.com/v6/latest/USD"
+    async with httpx.AsyncClient(timeout=20.0) as c:
+        r = await c.get(url, headers={"User-Agent": UA})
+        r.raise_for_status()
+        return r.json().get("rates") or {}
 
 
 async def fetch_coingecko():
@@ -170,14 +193,16 @@ async def fetch_commodities(defs):
     return out
 
 
-def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc):
+def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc, fx_rates):
     assets = []
 
     for c in crypto:
+        ticker = (c.get("symbol") or "").upper()
         assets.append({
             "category": "crypto",
             "name": c.get("name"),
-            "ticker": (c.get("symbol") or "").upper(),
+            "ticker": ticker,
+            "icon_url": _icon_url("crypto", ticker),
             "market_cap_usd": c.get("market_cap"),
             "price_usd": c.get("current_price"),
             "change_24h": c.get("price_change_percentage_24h_in_currency"),
@@ -197,6 +222,7 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc)
             "category": "public",
             "name": q.get("name") or ticker,
             "ticker": ticker,
+            "icon_url": _icon_url("public", ticker),
             "market_cap_usd": mcap,
             "price_usd": price,
             "change_24h": q.get("change_24h"),
@@ -221,6 +247,7 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc)
             "category": "commodity",
             "name": d["name"],
             "ticker": d["ticker"],
+            "icon_url": _icon_url("commodity", d["ticker"]),
             "market_cap_usd": price_usd * total_units,
             "price_usd": price_usd,
             "change_24h": p.get("change_24h"),
@@ -237,6 +264,7 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc)
             "category": "private",
             "name": p["name"],
             "ticker": p["ticker"],
+            "icon_url": _icon_url("private", p["ticker"]),
             "market_cap_usd": p["valuation_usd"],
             "price_usd": None,
             "change_24h": None,
@@ -249,12 +277,20 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc)
         })
 
     for f in fiat:
+        rate = fx_rates.get(f["ticker"])
+        if f["ticker"] == "USD":
+            price_usd = 1.0
+        elif rate and rate > 0:
+            price_usd = 1.0 / rate
+        else:
+            price_usd = None
         assets.append({
             "category": "fiat",
             "name": f["name"],
             "ticker": f["ticker"],
+            "icon_url": _icon_url("fiat", f["ticker"]),
             "market_cap_usd": f["m2_usd"],
-            "price_usd": None,
+            "price_usd": price_usd,
             "change_24h": None,
             "change_7d": None,
             "change_30d": None,
@@ -269,6 +305,7 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc)
             "category": "misc",
             "name": m["name"],
             "ticker": m["ticker"],
+            "icon_url": _icon_url("misc", m["ticker"]),
             "market_cap_usd": m["value_usd"],
             "price_usd": None,
             "change_24h": None,
@@ -287,6 +324,7 @@ async def refresh_loop():
     last_stocks = 0.0
     last_commodities = 0.0
     last_static_load = 0.0
+    last_fx = 0.0
     while True:
         try:
             now = time.time()
@@ -304,6 +342,14 @@ async def refresh_loop():
                 cache["crypto_raw"] = await fetch_coingecko()
             except Exception as e:
                 print(f"coingecko error: {e}")
+
+            # FX rates every 5 min (open.er-api.com is cheap but not for spam)
+            if now - last_fx > 300:
+                try:
+                    cache["fx_rates"] = await fetch_fx_rates()
+                    last_fx = now
+                except Exception as e:
+                    print(f"fx error: {e}")
 
             # Commodities every 30s (~17 calls)
             if now - last_commodities > 30:
@@ -327,6 +373,7 @@ async def refresh_loop():
                 cache["private"],
                 cache["fiat"],
                 cache["misc"],
+                cache["fx_rates"],
             )
             cache["last_updated"] = time.time()
         except Exception as e:
