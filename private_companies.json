@@ -1,0 +1,177 @@
+[
+  {
+    "name": "SpaceX",
+    "ticker": "SPACEX",
+    "valuation_usd": 350000000000,
+    "as_of": "2024-12-11",
+    "source": "tender offer reported by Bloomberg/CNBC"
+  },
+  {
+    "name": "OpenAI",
+    "ticker": "OPENAI",
+    "valuation_usd": 500000000000,
+    "as_of": "2025-10-02",
+    "source": "secondary share sale"
+  },
+  {
+    "name": "Anthropic",
+    "ticker": "ANTHROPIC",
+    "valuation_usd": 183000000000,
+    "as_of": "2025-09-02",
+    "source": "Series F led by ICONIQ"
+  },
+  {
+    "name": "ByteDance",
+    "ticker": "BYTEDANCE",
+    "valuation_usd": 300000000000,
+    "as_of": "2024-12-15",
+    "source": "internal share buyback"
+  },
+  {
+    "name": "xAI",
+    "ticker": "XAI",
+    "valuation_usd": 200000000000,
+    "as_of": "2025-12-05",
+    "source": "secondary tender reported by FT"
+  },
+  {
+    "name": "Stripe",
+    "ticker": "STRIPE",
+    "valuation_usd": 91500000000,
+    "as_of": "2025-02-26",
+    "source": "tender offer"
+  },
+  {
+    "name": "Databricks",
+    "ticker": "DATABRICKS",
+    "valuation_usd": 62000000000,
+    "as_of": "2024-12-17",
+    "source": "Series J"
+  },
+  {
+    "name": "Tether",
+    "ticker": "TETHER",
+    "valuation_usd": 515000000000,
+    "as_of": "2025-09-25",
+    "source": "private placement reported by Bloomberg"
+  },
+  {
+    "name": "Revolut",
+    "ticker": "REVOLUT",
+    "valuation_usd": 75000000000,
+    "as_of": "2025-11-19",
+    "source": "secondary share sale"
+  },
+  {
+    "name": "Canva",
+    "ticker": "CANVA",
+    "valuation_usd": 42000000000,
+    "as_of": "2025-04-30",
+    "source": "secondary share sale"
+  },
+  {
+    "name": "Anduril Industries",
+    "ticker": "ANDURIL",
+    "valuation_usd": 30500000000,
+    "as_of": "2025-06-05",
+    "source": "Series G"
+  },
+  {
+    "name": "Epic Games",
+    "ticker": "EPIC",
+    "valuation_usd": 22500000000,
+    "as_of": "2025-02-27",
+    "source": "Disney investment"
+  },
+  {
+    "name": "Discord",
+    "ticker": "DISCORD",
+    "valuation_usd": 14700000000,
+    "as_of": "2021-09-14",
+    "source": "Series H"
+  },
+  {
+    "name": "Fanatics",
+    "ticker": "FANATICS",
+    "valuation_usd": 31000000000,
+    "as_of": "2024-12-19",
+    "source": "tender offer"
+  },
+  {
+    "name": "Shein",
+    "ticker": "SHEIN",
+    "valuation_usd": 50000000000,
+    "as_of": "2024-08-05",
+    "source": "private placement reports"
+  },
+  {
+    "name": "Kraken",
+    "ticker": "KRAKEN",
+    "valuation_usd": 20000000000,
+    "as_of": "2025-10-24",
+    "source": "pre-IPO funding round"
+  },
+  {
+    "name": "Ripple",
+    "ticker": "RIPPLE",
+    "valuation_usd": 40000000000,
+    "as_of": "2025-11-04",
+    "source": "tender offer"
+  },
+  {
+    "name": "Rippling",
+    "ticker": "RIPPLING",
+    "valuation_usd": 16800000000,
+    "as_of": "2025-05-22",
+    "source": "Series G"
+  },
+  {
+    "name": "Chime",
+    "ticker": "CHIME",
+    "valuation_usd": 25000000000,
+    "as_of": "2021-08-13",
+    "source": "Series G"
+  },
+  {
+    "name": "Cargill",
+    "ticker": "CARGILL",
+    "valuation_usd": 60000000000,
+    "as_of": "2024-01-01",
+    "source": "Forbes private company estimate"
+  },
+  {
+    "name": "Mars Inc.",
+    "ticker": "MARS",
+    "valuation_usd": 100000000000,
+    "as_of": "2024-01-01",
+    "source": "Forbes private company estimate"
+  },
+  {
+    "name": "Koch Industries",
+    "ticker": "KOCH",
+    "valuation_usd": 125000000000,
+    "as_of": "2024-01-01",
+    "source": "Forbes private company estimate"
+  },
+  {
+    "name": "IKEA (Ingka)",
+    "ticker": "IKEA",
+    "valuation_usd": 60000000000,
+    "as_of": "2024-01-01",
+    "source": "Forbes private company estimate"
+  },
+  {
+    "name": "Bloomberg LP",
+    "ticker": "BLOOMBERG",
+    "valuation_usd": 60000000000,
+    "as_of": "2024-01-01",
+    "source": "Forbes private company estimate"
+  },
+  {
+    "name": "Thinking Machines Lab",
+    "ticker": "TML",
+    "valuation_usd": 12000000000,
+    "as_of": "2025-07-15",
+    "source": "seed round reported by The Information"
+  }
+]

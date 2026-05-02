@@ -1,0 +1,155 @@
+[
+  {
+    "name": "Gold",
+    "ticker": "GOLD",
+    "yahoo_symbol": "GC=F",
+    "method": "stock",
+    "stock_or_production_tonnes": 216265,
+    "unit_per_contract": "troy oz",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Silver",
+    "ticker": "SILVER",
+    "yahoo_symbol": "SI=F",
+    "method": "stock",
+    "stock_or_production_tonnes": 1740000,
+    "unit_per_contract": "troy oz",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Platinum",
+    "ticker": "PLATINUM",
+    "yahoo_symbol": "PL=F",
+    "method": "stock",
+    "stock_or_production_tonnes": 10000,
+    "unit_per_contract": "troy oz",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Palladium",
+    "ticker": "PALLADIUM",
+    "yahoo_symbol": "PA=F",
+    "method": "stock",
+    "stock_or_production_tonnes": 3500,
+    "unit_per_contract": "troy oz",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Crude Oil (WTI)",
+    "ticker": "CRUDE",
+    "yahoo_symbol": "CL=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 4400000000,
+    "unit_per_contract": "barrel",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Brent Crude",
+    "ticker": "BRENT",
+    "yahoo_symbol": "BZ=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 4400000000,
+    "unit_per_contract": "barrel",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Natural Gas",
+    "ticker": "NATGAS",
+    "yahoo_symbol": "NG=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 3000000000,
+    "unit_per_contract": "mmbtu",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Heating Oil",
+    "ticker": "HEATOIL",
+    "yahoo_symbol": "HO=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 700000000,
+    "unit_per_contract": "gallon",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Copper",
+    "ticker": "COPPER",
+    "yahoo_symbol": "HG=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 22000000,
+    "unit_per_contract": "pound",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Wheat",
+    "ticker": "WHEAT",
+    "yahoo_symbol": "ZW=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 780000000,
+    "unit_per_contract": "bushel",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Corn",
+    "ticker": "CORN",
+    "yahoo_symbol": "ZC=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 1200000000,
+    "unit_per_contract": "bushel",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Soybeans",
+    "ticker": "SOYBEANS",
+    "yahoo_symbol": "ZS=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 400000000,
+    "unit_per_contract": "bushel",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Coffee",
+    "ticker": "COFFEE",
+    "yahoo_symbol": "KC=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 10000000,
+    "unit_per_contract": "pound",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Sugar",
+    "ticker": "SUGAR",
+    "yahoo_symbol": "SB=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 180000000,
+    "unit_per_contract": "pound",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Cocoa",
+    "ticker": "COCOA",
+    "yahoo_symbol": "CC=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 5000000,
+    "unit_per_contract": "tonne",
+    "price_multiplier": 1.0
+  },
+  {
+    "name": "Cotton",
+    "ticker": "COTTON",
+    "yahoo_symbol": "CT=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 25000000,
+    "unit_per_contract": "pound",
+    "price_multiplier": 0.01
+  },
+  {
+    "name": "Lumber",
+    "ticker": "LUMBER",
+    "yahoo_symbol": "LBR=F",
+    "method": "flow",
+    "stock_or_production_tonnes": 400000000,
+    "unit_per_contract": "1000 boardft",
+    "price_multiplier": 1.0
+  }
+]

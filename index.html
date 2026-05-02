@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mixed Asset Tracker</title>
+<style>
+  :root {
+    --border: #e4e4e7;
+    --text: #18181b;
+    --muted: #71717a;
+    --pos: #16a34a;
+    --neg: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: #fafafa;
+  }
+  header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+  }
+  h1 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .filters label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    user-select: none;
+  }
+  .swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+  main { padding: 12px 20px 60px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+  }
+  th, td {
+    padding: 8px 10px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  th:nth-child(1), th:nth-child(2),
+  td:nth-child(1), td:nth-child(2) { text-align: left; }
+  th {
+    background: #f4f4f5;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  th .arrow { color: var(--muted); margin-left: 4px; font-size: 11px; }
+  tr.category-public    { background: #ffffff; }
+  tr.category-private   { background: #f4f4f5; }
+  tr.category-crypto    { background: #f5f0fa; }
+  tr.category-commodity { background: #fdf6dc; }
+  tr.category-fiat      { background: #eef7ee; }
+  tr.category-misc      { background: #eef3fb; }
+  tr:hover td { filter: brightness(0.97); }
+  .ticker { color: var(--muted); margin-left: 6px; font-size: 12px; }
+  .cat-tag {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: rgba(0,0,0,0.04);
+    letter-spacing: 0.04em;
+  }
+  .method-tag {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    background: rgba(0,0,0,0.06);
+    color: var(--muted);
+  }
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .muted { color: var(--muted); }
+  footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    background: #fff;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Mixed Asset Tracker</h1>
+  <div class="filters" id="filters">
+    <label><input type="checkbox" data-cat="public" checked><span class="swatch" style="background:#fff"></span>Public companies</label>
+    <label><input type="checkbox" data-cat="private" checked><span class="swatch" style="background:#f4f4f5"></span>Private companies</label>
+    <label><input type="checkbox" data-cat="crypto" checked><span class="swatch" style="background:#f5f0fa"></span>Crypto</label>
+    <label><input type="checkbox" data-cat="commodity" checked><span class="swatch" style="background:#fdf6dc"></span>Commodities</label>
+    <label><input type="checkbox" data-cat="fiat" checked><span class="swatch" style="background:#eef7ee"></span>Fiat (M2)</label>
+    <label><input type="checkbox" data-cat="misc" checked><span class="swatch" style="background:#eef3fb"></span>Other</label>
+  </div>
+</header>
+<main>
+  <table>
+    <thead>
+      <tr id="head">
+        <th data-key="rank">#</th>
+        <th data-key="name">Name</th>
+        <th data-key="market_cap_usd">Market Cap<span class="arrow">▼</span></th>
+        <th data-key="price_usd">Price</th>
+        <th data-key="change_24h">24h %</th>
+        <th data-key="change_7d">7d %</th>
+        <th data-key="change_30d">30d %</th>
+        <th data-key="change_1y">1y %</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</main>
+<footer>
+  <span id="status">Loading…</span>
+  <span>Powered by CoinGecko · Yahoo Finance · Savills · SIFMA</span>
+</footer>
+<script>
+const state = {
+  assets: [],
+  lastUpdated: 0,
+  sortKey: "market_cap_usd",
+  sortDir: -1,
+  filters: { public: true, private: true, crypto: true, commodity: true, fiat: true, misc: true },
+};
+
+const fmtMcap = (v) => {
+  if (v === null || v === undefined || !isFinite(v)) return "—";
+  const abs = Math.abs(v);
+  if (abs >= 1e12) return "$" + (v / 1e12).toFixed(2) + "T";
+  if (abs >= 1e9)  return "$" + (v / 1e9).toFixed(2)  + "B";
+  if (abs >= 1e6)  return "$" + (v / 1e6).toFixed(2)  + "M";
+  return "$" + Math.round(v).toLocaleString();
+};
+
+const fmtPrice = (v) => {
+  if (v === null || v === undefined || !isFinite(v)) return "—";
+  if (v >= 1000) return "$" + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  if (v >= 1) return "$" + v.toFixed(2);
+  if (v >= 0.01) return "$" + v.toFixed(4);
+  return "$" + v.toPrecision(3);
+};
+
+const fmtPct = (v) => {
+  if (v === null || v === undefined || !isFinite(v)) return '<span class="muted">—</span>';
+  const sign = v >= 0 ? "+" : "";
+  const cls = v >= 0 ? "pos" : "neg";
+  return `<span class="${cls}">${sign}${v.toFixed(2)}%</span>`;
+};
+
+const catLabel = {
+  public: "public", private: "private", crypto: "crypto",
+  commodity: "commodity", fiat: "fiat", misc: "other",
+};
+
+function render() {
+  const visible = state.assets.filter(a => state.filters[a.category]);
+  const dir = state.sortDir;
+  const key = state.sortKey;
+  visible.sort((a, b) => {
+    const av = a[key];
+    const bv = b[key];
+    const aNull = av === null || av === undefined || !isFinite(av);
+    const bNull = bv === null || bv === undefined || !isFinite(bv);
+    if (aNull && bNull) return 0;
+    if (aNull) return 1;
+    if (bNull) return -1;
+    if (typeof av === "string" || typeof bv === "string") {
+      return String(av).localeCompare(String(bv)) * dir;
+    }
+    return (av - bv) * dir;
+  });
+
+  const rows = visible.map((a, i) => {
+    const methodTag = a.method ? `<span class="method-tag">${a.method}</span>` : "";
+    return `
+      <tr class="category-${a.category}">
+        <td>${i + 1}</td>
+        <td>
+          <strong>${escapeHtml(a.name || "")}</strong>
+          <span class="ticker">${escapeHtml(a.ticker || "")}</span>
+          <span class="cat-tag">${catLabel[a.category] || a.category}</span>
+          ${methodTag}
+        </td>
+        <td>${fmtMcap(a.market_cap_usd)}</td>
+        <td>${fmtPrice(a.price_usd)}</td>
+        <td>${fmtPct(a.change_24h)}</td>
+        <td>${fmtPct(a.change_7d)}</td>
+        <td>${fmtPct(a.change_30d)}</td>
+        <td>${fmtPct(a.change_1y)}</td>
+      </tr>`;
+  }).join("");
+
+  document.getElementById("rows").innerHTML = rows ||
+    `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No assets match current filters.</td></tr>`;
+  updateSortIndicators();
+  updateStatus();
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll("#head th").forEach(th => {
+    const arrow = th.querySelector(".arrow");
+    if (arrow) arrow.remove();
+    if (th.dataset.key === state.sortKey) {
+      const a = document.createElement("span");
+      a.className = "arrow";
+      a.textContent = state.sortDir === -1 ? "▼" : "▲";
+      th.appendChild(a);
+    }
+  });
+}
+
+function updateStatus() {
+  const el = document.getElementById("status");
+  if (!state.lastUpdated) { el.textContent = "Loading…"; return; }
+  const ago = Math.max(0, Math.round(Date.now() / 1000 - state.lastUpdated));
+  el.textContent = `Updated ${ago}s ago · ${state.assets.length} assets`;
+}
+
+document.querySelectorAll("#head th").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    if (!key || key === "rank") return;
+    if (state.sortKey === key) state.sortDir *= -1;
+    else { state.sortKey = key; state.sortDir = -1; }
+    render();
+  });
+});
+
+document.querySelectorAll("#filters input").forEach(el => {
+  el.addEventListener("change", () => {
+    state.filters[el.dataset.cat] = el.checked;
+    render();
+  });
+});
+
+async function refresh() {
+  try {
+    const r = await fetch("/api/assets");
+    const data = await r.json();
+    state.assets = data.assets || [];
+    state.lastUpdated = data.last_updated || 0;
+    render();
+  } catch (e) {
+    console.error("fetch failed", e);
+  }
+}
+
+refresh();
+setInterval(refresh, 30000);
+setInterval(updateStatus, 1000);
+</script>
+</body>
+</html>
