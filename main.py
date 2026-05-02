@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from tickers import SHARES_OUT, TICKERS
+from scrape_public import fetch_public_snapshot, download_logos
 
 ROOT = Path(__file__).parent
 UA = (
@@ -51,7 +51,7 @@ cache = {
     "fiat": [],
     "misc": [],
     "commodity_constants": [],
-    "stocks": {},
+    "public_snapshot": [],   # list of dicts from scrape_public
     "crypto_raw": [],
     "commodity_prices": {},
     "fx_rates": {},  # ticker -> units of that currency per 1 USD
@@ -154,25 +154,6 @@ def _summarize_chart(data):
     }
 
 
-async def fetch_yahoo_stocks(tickers):
-    sem = asyncio.Semaphore(CHART_CONCURRENCY)
-    out = {}
-    async with CurlAsyncSession(headers=YAHOO_HEADERS, impersonate="chrome") as c:
-        async def one(sym):
-            try:
-                data = await _chart(c, sym, sem)
-                if not data:
-                    return
-                s = _summarize_chart(data)
-                if s:
-                    out[sym] = s
-            except Exception:
-                pass
-
-        await asyncio.gather(*(one(t) for t in tickers))
-    return out
-
-
 async def fetch_commodities(defs):
     sem = asyncio.Semaphore(CHART_CONCURRENCY)
     out = {}
@@ -193,7 +174,7 @@ async def fetch_commodities(defs):
     return out
 
 
-def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc, fx_rates):
+def unify(crypto, public_snap, commodity_prices, commodity_defs, private, fiat, misc, fx_rates):
     assets = []
 
     for c in crypto:
@@ -214,23 +195,21 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc,
             "method": None,
         })
 
-    for ticker, q in stocks.items():
-        shares = SHARES_OUT.get(ticker)
-        price = q.get("price")
-        mcap = price * shares if (price is not None and shares) else None
+    for e in public_snap:
+        ticker = e["ticker"]
         assets.append({
             "category": "public",
-            "name": q.get("name") or ticker,
+            "name": e["name"],
             "ticker": ticker,
             "icon_url": _icon_url("public", ticker),
-            "market_cap_usd": mcap,
-            "price_usd": price,
-            "change_24h": q.get("change_24h"),
-            "change_7d": q.get("change_7d"),
-            "change_30d": q.get("change_30d"),
-            "change_1y": q.get("change_1y"),
+            "market_cap_usd": e["market_cap_usd"],
+            "price_usd": e["price_usd"],
+            "change_24h": e.get("change_24h"),
+            "change_7d": None,
+            "change_30d": None,
+            "change_1y": None,
             "as_of": None,
-            "source": "Yahoo Finance",
+            "source": "companiesmarketcap.com",
             "method": None,
         })
 
@@ -321,7 +300,7 @@ def unify(crypto, stocks, commodity_prices, commodity_defs, private, fiat, misc,
 
 
 async def refresh_loop():
-    last_stocks = 0.0
+    last_public = 0.0
     last_commodities = 0.0
     last_static_load = 0.0
     last_fx = 0.0
@@ -358,16 +337,20 @@ async def refresh_loop():
                     cache["commodity_prices"] = cm
                     last_commodities = now
 
-            # Stocks every 5 min (~110 calls per cycle is gentle enough)
-            if now - last_stocks > 300:
-                st = await fetch_yahoo_stocks(TICKERS)
-                if st:
-                    cache["stocks"].update(st)
-                last_stocks = now
+            # Top 1000 public companies snapshot every 5 min
+            if now - last_public > 300:
+                try:
+                    snap = await fetch_public_snapshot()
+                    if snap:
+                        cache["public_snapshot"] = snap
+                        asyncio.create_task(download_logos(snap))
+                    last_public = now
+                except Exception as e:
+                    print(f"public snapshot error: {e}")
 
             cache["assets"] = unify(
                 cache["crypto_raw"],
-                cache["stocks"],
+                cache["public_snapshot"],
                 cache["commodity_prices"],
                 cache["commodity_constants"],
                 cache["private"],
