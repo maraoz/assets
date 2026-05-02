@@ -46,6 +46,7 @@
     background: #fff;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    table-layout: fixed;
   }
   th, td {
     padding: 8px 10px;
@@ -55,10 +56,14 @@
   }
   th:nth-child(1), th:nth-child(2),
   td:nth-child(1), td:nth-child(2) { text-align: left; }
-  td:nth-child(2) { max-width: 360px; }
+  th:nth-child(1), td:nth-child(1) { width: 56px; }
+  th:nth-child(2), td:nth-child(2) {
+    width: 280px;
+    overflow: hidden;
+  }
   td:nth-child(2) strong {
     display: inline-block;
-    max-width: 240px;
+    max-width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -80,7 +85,10 @@
   tr.category-commodity { background: #fdf6dc; }
   tr.category-fiat      { background: #eef7ee; }
   tr.category-misc      { background: #eef3fb; }
-  tr:hover td { filter: brightness(0.97); }
+  tbody tr { transition: box-shadow 120ms ease; }
+  tbody tr:hover {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.04);
+  }
   .ticker { color: var(--muted); margin-left: 6px; font-size: 12px; }
   .icon {
     width: 22px;
