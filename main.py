@@ -397,3 +397,13 @@ async def get_assets():
 @app.get("/")
 async def index():
     return FileResponse(ROOT / "index.html")
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse(ROOT / "favicon.ico", media_type="image/x-icon")
+
+
+@app.get("/favicon-180.png")
+async def apple_touch_icon():
+    return FileResponse(ROOT / "favicon-180.png", media_type="image/png")
