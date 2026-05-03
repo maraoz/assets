@@ -1,11 +1,11 @@
 [
   {
-    "name": "Global Real Estate",
+    "name": "Urban Real Estate",
     "ticker": "GLOBAL_RE",
     "emoji_hex": "1f3e0",
-    "value_usd": 393300000000000,
+    "value_usd": 348000000000000,
     "as_of": "2025-01-01",
-    "source": "Savills World Research 2025"
+    "source": "Savills World Research 2025 — residential + commercial only; farmland split out as a separate row"
   },
   {
     "name": "Global Bonds",
@@ -14,5 +14,21 @@
     "value_usd": 145100000000000,
     "as_of": "2024-12-31",
     "source": "SIFMA 2025 Capital Markets Fact Book"
+  },
+  {
+    "name": "Global Farmland",
+    "ticker": "GLOBAL_FARMLAND",
+    "emoji_hex": "1f69c",
+    "value_usd": 45000000000000,
+    "as_of": "2024-12-31",
+    "source": "FAO + Savills agricultural land estimate"
+  },
+  {
+    "name": "Global Art",
+    "ticker": "GLOBAL_ART",
+    "emoji_hex": "1f3a8",
+    "value_usd": 2000000000000,
+    "as_of": "2024-12-31",
+    "source": "Deloitte/UBS Art & Finance and TEFAF Art Market Report aggregate estimate"
   }
 ]
