@@ -103,6 +103,7 @@
     margin-right: 8px;
   }
   .icon[data-fallback] { display: none; }
+  .casa-logo-link { display: inline-block; line-height: 0; }
   .casa-logo {
     width: 14px;
     height: 14px;
@@ -210,7 +211,7 @@
 </main>
 <footer>
   <span id="status">Loading…</span>
-  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz <img src="/icons/casa-araoz.png" alt="" class="casa-logo"></a></span>
+  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.png" alt="" class="casa-logo"></a></span>
 </footer>
 <script>
 const state = {
@@ -221,6 +222,97 @@ const state = {
   sortDir: -1,
   filters: { public: true, private: true, crypto: true, commodity: true, fiat: true, misc: true },
 };
+
+const STORAGE_KEY = "assets-tracker-state-v1";
+const ALL_CATS = ["public", "private", "crypto", "commodity", "fiat", "misc"];
+
+// Short codes for compact URLs. Two letters because public/private and
+// crypto/commodity collide on the first letter.
+const CAT_SHORT = { public: "pu", private: "pr", crypto: "cr", commodity: "co", fiat: "fi", misc: "mi" };
+const CAT_LONG = Object.fromEntries(Object.entries(CAT_SHORT).map(([k, v]) => [v, k]));
+
+const KEY_SHORT = {
+  name: "n", market_cap_usd: "mc", price_usd: "p",
+  change_24h: "c1", change_7d: "c7", change_30d: "c30", change_1y: "cy",
+};
+const KEY_LONG = Object.fromEntries(Object.entries(KEY_SHORT).map(([k, v]) => [v, k]));
+
+function parseHash() {
+  const out = new Map();
+  const raw = location.hash.replace(/^#/, "");
+  if (!raw) return out;
+  for (const piece of raw.split("&")) {
+    const idx = piece.indexOf("=");
+    if (idx === -1) continue;
+    out.set(piece.slice(0, idx), decodeURIComponent(piece.slice(idx + 1)));
+  }
+  return out;
+}
+
+function loadInitialState() {
+  const params = parseHash();
+
+  if (params.has("c")) {
+    const on = new Set(params.get("c").split(",").map(s => CAT_LONG[s]).filter(Boolean));
+    ALL_CATS.forEach(c => { state.filters[c] = on.has(c); });
+  } else {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved.filters) {
+          ALL_CATS.forEach(c => {
+            if (typeof saved.filters[c] === "boolean") state.filters[c] = saved.filters[c];
+          });
+        }
+        if (typeof saved.sortKey === "string") state.sortKey = saved.sortKey;
+        if (saved.sortDir === 1 || saved.sortDir === -1) state.sortDir = saved.sortDir;
+      }
+    } catch {}
+  }
+
+  if (params.has("s")) {
+    let s = params.get("s");
+    let dir = 1;  // bare = asc
+    if (s.startsWith("-"))      { dir = -1; s = s.slice(1); }
+    else if (s.startsWith("+")) { dir =  1; s = s.slice(1); }
+    const longKey = KEY_LONG[s];
+    if (longKey) {
+      state.sortKey = longKey;
+      state.sortDir = dir;
+    }
+  }
+
+  document.querySelectorAll("#filters input").forEach(el => {
+    el.checked = !!state.filters[el.dataset.cat];
+  });
+}
+
+function persistState() {
+  // Build the hash by hand so commas stay literal (URLSearchParams encodes
+  // them as %2C, which is ugly in shareable URLs).
+  const parts = [];
+  const offCount = ALL_CATS.filter(c => !state.filters[c]).length;
+  if (offCount > 0) {
+    const on = ALL_CATS.filter(c => state.filters[c]).map(c => CAT_SHORT[c]);
+    parts.push("c=" + on.join(","));
+  }
+  if (state.sortKey !== "market_cap_usd" || state.sortDir !== -1) {
+    const k = KEY_SHORT[state.sortKey] || state.sortKey;
+    const sign = state.sortDir === -1 ? "-" : "+";
+    parts.push("s=" + sign + k);
+  }
+  const hash = parts.length ? "#" + parts.join("&") : "";
+  history.replaceState(null, "", location.pathname + hash);
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      filters: state.filters,
+      sortKey: state.sortKey,
+      sortDir: state.sortDir,
+    }));
+  } catch {}
+}
 
 const fmtMcap = (v) => {
   if (v === null || v === undefined || !isFinite(v)) return "—";
@@ -272,10 +364,16 @@ function buildRow(a) {
   const iconImg = a.icon_url
     ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
     : "";
+  // Misc/private/commodity tickers are synthetic labels (GLOBAL_BONDS, OPENAI,
+  // GOLD…) — hide them. Public/crypto/fiat tickers are real, keep.
+  const realTickerCategories = new Set(["public", "crypto", "fiat"]);
+  const tickerSpan = realTickerCategories.has(a.category) && a.ticker
+    ? ` <span class="ticker">${escapeHtml(a.ticker)}</span>`
+    : "";
   cells.name.innerHTML =
     iconImg +
     `<strong>${escapeHtml(a.name || "")}</strong>` +
-    ` <span class="ticker">${escapeHtml(a.ticker || "")}</span>` +
+    tickerSpan +
     ` <span class="cat-tag">${catLabel[a.category] || a.category}</span>` +
     methodIcon(a.method);
 
@@ -299,6 +397,22 @@ function updateRow(entry, a, rank) {
 
 function render() {
   const visible = state.assets.filter(a => state.filters[a.category]);
+
+  // Rank is always by market cap among the visible set, regardless of how
+  // the user is sorting — Gold stays #3 even when you sort by name.
+  const mcapRank = new Map();
+  [...visible]
+    .sort((a, b) => {
+      const av = a.market_cap_usd, bv = b.market_cap_usd;
+      const aNull = av == null || !isFinite(av);
+      const bNull = bv == null || !isFinite(bv);
+      if (aNull && bNull) return 0;
+      if (aNull) return 1;
+      if (bNull) return -1;
+      return bv - av;
+    })
+    .forEach((a, i) => mcapRank.set(a, i + 1));
+
   const dir = state.sortDir;
   const key = state.sortKey;
   visible.sort((a, b) => {
@@ -334,7 +448,7 @@ function render() {
       entry = buildRow(a);
       rowMap.set(a.ticker, entry);
     }
-    updateRow(entry, a, i + 1);
+    updateRow(entry, a, mcapRank.get(a) || (i + 1));
     frag.appendChild(entry.tr);  // appendChild moves nodes, doesn't clone
   });
 
@@ -409,6 +523,7 @@ document.querySelectorAll("#head th").forEach(th => {
     if (!key || key === "rank") return;
     if (state.sortKey === key) state.sortDir *= -1;
     else { state.sortKey = key; state.sortDir = -1; }
+    persistState();
     render();
   });
 });
@@ -416,6 +531,7 @@ document.querySelectorAll("#head th").forEach(th => {
 document.querySelectorAll("#filters input").forEach(el => {
   el.addEventListener("change", () => {
     state.filters[el.dataset.cat] = el.checked;
+    persistState();
     render();
   });
 });
@@ -436,6 +552,7 @@ async function refresh() {
   }
 }
 
+loadInitialState();
 refresh();
 setInterval(refresh, 30000);
 setInterval(updateStatus, 1000);

@@ -29,6 +29,7 @@ Source HTML structure (per row):
 """
 
 import asyncio
+import html
 import io
 import json
 import re
@@ -66,12 +67,12 @@ def _parse_row(row_html: str):
     country = COUNTRY_RE.search(row_html)
     return {
         "rank": int(rank.group(1)),
-        "name": name.group(1).strip(),
-        "ticker": code.group(1).strip(),
+        "name": html.unescape(name.group(1)).strip(),
+        "ticker": html.unescape(code.group(1)).strip(),
         "market_cap_usd": int(float(nums[1])),
         "price_usd": float(nums[2]) / 100.0,
         "change_24h": float(nums[3]) / 100.0,
-        "country": country.group(1).strip() if country else "",
+        "country": html.unescape(country.group(1)).strip() if country else "",
         "logo_url": (BASE + logo.group(1)) if logo else None,
     }
 
