@@ -179,6 +179,32 @@
     position: sticky;
     bottom: 0;
   }
+
+  @media (max-width: 768px) {
+    header, main, footer { padding-left: 14px; padding-right: 14px; }
+    .filters { gap: 10px; font-size: 12px; }
+    th, td { padding: 6px 6px; font-size: 12.5px; }
+    th:nth-child(1), td:nth-child(1) { width: 32px; }
+    th:nth-child(2), td:nth-child(2) { width: auto; }
+    td:nth-child(2) strong { max-width: calc(100% - 70px); }
+    th:nth-child(3), td:nth-child(3) { width: 84px; }
+    th:nth-child(4), td:nth-child(4) { width: 72px; }
+    th:nth-child(5), td:nth-child(5) { width: 64px; }
+    th:nth-child(6), td:nth-child(6),
+    th:nth-child(7), td:nth-child(7),
+    th:nth-child(8), td:nth-child(8) { display: none; }
+    .icon { width: 18px; height: 18px; margin-right: 6px; }
+    .cat-tag { font-size: 9px; padding: 1px 4px; }
+  }
+
+  @media (max-width: 480px) {
+    th:nth-child(4), td:nth-child(4) { display: none; }
+    .cat-tag { display: none; }
+    .ticker { display: none; }
+    td:nth-child(2) strong { max-width: 100%; }
+    .filters label { gap: 4px; }
+    h1 { font-size: 16px; }
+  }
 </style>
 </head>
 <body>
