@@ -237,7 +237,7 @@
 </main>
 <footer>
   <span id="status">Loading…</span>
-  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.svg" alt="" class="casa-logo"></a></span>
+  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.svg" alt="" width="14" height="14" class="casa-logo"></a></span>
 </footer>
 <script>
 const state = {
@@ -388,7 +388,7 @@ function buildRow(a) {
   cells.ch1y  = tr.insertCell();
 
   const iconImg = a.icon_url
-    ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
+    ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" width="22" height="22" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
     : "";
   // Misc/private/commodity tickers are synthetic labels (GLOBAL_BONDS, OPENAI,
   // GOLD…) — hide them. Public/crypto/fiat tickers are real, keep.
@@ -460,7 +460,7 @@ function render() {
   if (visible.length === 0) {
     rowMap.clear();
     tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px 24px;color:var(--muted)">
-      <img src="/icons/casa-araoz.svg" alt="" style="width:64px;height:64px;opacity:0.35;filter:grayscale(1);display:block;margin:0 auto 12px"/>
+      <img src="/icons/casa-araoz.svg" alt="" width="64" height="64" style="opacity:0.35;filter:grayscale(1);display:block;margin:0 auto 12px"/>
       No assets match current filters.
     </td></tr>`;
     updateSortIndicators();

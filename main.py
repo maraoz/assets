@@ -1,12 +1,13 @@
 import asyncio
+import hashlib
 import json
 import time
 from pathlib import Path
 
 import httpx
 from curl_cffi.requests import AsyncSession as CurlAsyncSession
-from fastapi import FastAPI
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from scrape_public import fetch_public_snapshot, download_logos
@@ -55,6 +56,8 @@ cache = {
     "crypto_raw": [],
     "commodity_prices": {},
     "fx_rates": {},  # ticker -> units of that currency per 1 USD
+    "api_body": b"{}",  # pre-serialized JSON bytes for /api/assets
+    "api_etag": '"0"',
 }
 
 app = FastAPI()
@@ -371,6 +374,19 @@ async def refresh_loop():
                 cache["fx_rates"],
             )
             cache["last_updated"] = time.time()
+
+            # Pre-serialize the API body once per refresh, dropping null fields
+            # so 1000+ rows × ~6 mostly-null fields don't waste bytes on every poll.
+            slim = []
+            for a in cache["assets"]:
+                slim.append({k: v for k, v in a.items() if v is not None})
+            body = json.dumps(
+                {"assets": slim, "last_updated": cache["last_updated"]},
+                separators=(",", ":"),  # no whitespace
+                ensure_ascii=False,
+            ).encode("utf-8")
+            cache["api_body"] = body
+            cache["api_etag"] = '"' + hashlib.md5(body).hexdigest()[:16] + '"'
         except Exception as e:
             print(f"refresh error: {e}")
         await asyncio.sleep(30)
@@ -382,11 +398,23 @@ async def startup():
 
 
 @app.get("/api/assets")
-async def get_assets():
-    return JSONResponse({
-        "assets": cache.get("assets", []),
-        "last_updated": cache.get("last_updated", 0),
-    })
+async def get_assets(request: Request):
+    etag = cache["api_etag"]
+    # 304 fast-path: when the client already has the current snapshot
+    if request.headers.get("if-none-match") == etag:
+        return Response(status_code=304, headers={
+            "etag": etag,
+            "cache-control": "public, max-age=25, must-revalidate",
+        })
+    return Response(
+        content=cache["api_body"],
+        media_type="application/json",
+        headers={
+            "etag": etag,
+            # Cloudflare can serve from edge for 25s (just under our 30s poll)
+            "cache-control": "public, max-age=25, must-revalidate",
+        },
+    )
 
 
 @app.get("/")
