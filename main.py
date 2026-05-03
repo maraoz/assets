@@ -64,6 +64,16 @@ ICONS_DIR = ROOT / "icons"
 ICONS_DIR.mkdir(exist_ok=True)
 app.mount("/icons", StaticFiles(directory=str(ICONS_DIR)), name="icons")
 
+
+@app.middleware("http")
+async def cache_icons(request, call_next):
+    """Long-lived caching for /icons/*. Safe because every icon URL carries
+    a ?v=<mtime> cache-buster, so a new mtime → new URL → fresh fetch."""
+    response = await call_next(request)
+    if request.url.path.startswith("/icons/"):
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response
+
 # Per-asset icon path with mtime-based cache buster.
 # Returns None when no file exists so the frontend can omit the <img>.
 def _icon_url(category: str, ticker: str) -> str | None:

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>All Asset Tracker</title>
+<title>All Assets Tracker</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/favicon-180.png">
 <style>
@@ -251,6 +251,52 @@ const catLabel = {
   commodity: "commodity", fiat: "fiat M2", misc: "misc",
 };
 
+// Keyed row map so we never recreate <tr> / <img> elements across renders;
+// rebuilding the DOM every tick made every <img> re-decode and flicker.
+const rowMap = new Map();  // ticker -> { tr, cells, lastCategory }
+
+function buildRow(a) {
+  const tr = document.createElement("tr");
+  tr.className = `category-${a.category}`;
+
+  const cells = {};
+  cells.rank  = tr.insertCell();
+  cells.name  = tr.insertCell();
+  cells.mcap  = tr.insertCell();
+  cells.price = tr.insertCell();
+  cells.ch24  = tr.insertCell();
+  cells.ch7   = tr.insertCell();
+  cells.ch30  = tr.insertCell();
+  cells.ch1y  = tr.insertCell();
+
+  const iconImg = a.icon_url
+    ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
+    : "";
+  cells.name.innerHTML =
+    iconImg +
+    `<strong>${escapeHtml(a.name || "")}</strong>` +
+    ` <span class="ticker">${escapeHtml(a.ticker || "")}</span>` +
+    ` <span class="cat-tag">${catLabel[a.category] || a.category}</span>` +
+    methodIcon(a.method);
+
+  return { tr, cells, lastCategory: a.category };
+}
+
+function updateRow(entry, a, rank) {
+  if (entry.lastCategory !== a.category) {
+    entry.tr.className = `category-${a.category}`;
+    entry.lastCategory = a.category;
+  }
+  const c = entry.cells;
+  c.rank.textContent  = rank;
+  c.mcap.textContent  = fmtMcap(a.market_cap_usd);
+  c.price.textContent = fmtPrice(a.price_usd);
+  c.ch24.innerHTML    = fmtPct(a.change_24h);
+  c.ch7.innerHTML     = fmtPct(a.change_7d);
+  c.ch30.innerHTML    = fmtPct(a.change_30d);
+  c.ch1y.innerHTML    = fmtPct(a.change_1y);
+}
+
 function render() {
   const visible = state.assets.filter(a => state.filters[a.category]);
   const dir = state.sortDir;
@@ -269,31 +315,38 @@ function render() {
     return (av - bv) * dir;
   });
 
-  const rows = visible.map((a, i) => {
-    const methodTag = methodIcon(a.method);
-    const iconImg = a.icon_url
-      ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
-      : "";
-    return `
-      <tr class="category-${a.category}">
-        <td>${i + 1}</td>
-        <td>
-          ${iconImg}<strong>${escapeHtml(a.name || "")}</strong>
-          <span class="ticker">${escapeHtml(a.ticker || "")}</span>
-          <span class="cat-tag">${catLabel[a.category] || a.category}</span>
-          ${methodTag}
-        </td>
-        <td>${fmtMcap(a.market_cap_usd)}</td>
-        <td>${fmtPrice(a.price_usd)}</td>
-        <td>${fmtPct(a.change_24h)}</td>
-        <td>${fmtPct(a.change_7d)}</td>
-        <td>${fmtPct(a.change_30d)}</td>
-        <td>${fmtPct(a.change_1y)}</td>
-      </tr>`;
-  }).join("");
+  const tbody = document.getElementById("rows");
 
-  document.getElementById("rows").innerHTML = rows ||
-    `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No assets match current filters.</td></tr>`;
+  if (visible.length === 0) {
+    rowMap.clear();
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No assets match current filters.</td></tr>`;
+    updateSortIndicators();
+    updateStatus();
+    return;
+  }
+
+  const seen = new Set();
+  const frag = document.createDocumentFragment();
+  visible.forEach((a, i) => {
+    seen.add(a.ticker);
+    let entry = rowMap.get(a.ticker);
+    if (!entry) {
+      entry = buildRow(a);
+      rowMap.set(a.ticker, entry);
+    }
+    updateRow(entry, a, i + 1);
+    frag.appendChild(entry.tr);  // appendChild moves nodes, doesn't clone
+  });
+
+  // Drop rows that fell out of the visible set (filter unchecked, or asset gone)
+  for (const [ticker, entry] of rowMap) {
+    if (!seen.has(ticker)) {
+      entry.tr.remove();
+      rowMap.delete(ticker);
+    }
+  }
+
+  tbody.appendChild(frag);
   updateSortIndicators();
   updateStatus();
 }
