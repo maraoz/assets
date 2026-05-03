@@ -75,12 +75,14 @@ async def cache_icons(request, call_next):
     return response
 
 # Per-asset icon path with mtime-based cache buster.
-# Returns None when no file exists so the frontend can omit the <img>.
+# Prefer .webp; fall back to .png for any stragglers; None hides the <img>.
 def _icon_url(category: str, ticker: str) -> str | None:
-    p = ICONS_DIR / category / f"{ticker}.png"
-    if not p.exists():
-        return None
-    return f"/icons/{category}/{ticker}.png?v={int(p.stat().st_mtime)}"
+    cat_dir = ICONS_DIR / category
+    for ext in ("webp", "png"):
+        p = cat_dir / f"{ticker}.{ext}"
+        if p.exists():
+            return f"/icons/{category}/{ticker}.{ext}?v={int(p.stat().st_mtime)}"
+    return None
 
 
 def load_json(name):

@@ -119,14 +119,15 @@ async def fetch_public_snapshot():
 
 
 async def download_logos(entries):
-    """Pull any missing logos and convert to PNG."""
+    """Pull any missing logos. Saves as 64x64 WebP for size."""
     ICONS_PUBLIC.mkdir(parents=True, exist_ok=True)
     sem = asyncio.Semaphore(8)
     async with AsyncSession(impersonate="chrome") as c:
         async def one(e):
             ticker = e["ticker"]
-            out = ICONS_PUBLIC / f"{ticker}.png"
-            if out.exists():
+            out_webp = ICONS_PUBLIC / f"{ticker}.webp"
+            out_png = ICONS_PUBLIC / f"{ticker}.png"
+            if out_webp.exists() or out_png.exists():
                 return False
             async with sem:
                 try:
@@ -134,7 +135,12 @@ async def download_logos(entries):
                     if r.status_code != 200 or len(r.content) < 200:
                         return False
                     img = Image.open(io.BytesIO(r.content)).convert("RGBA")
-                    img.save(out)
+                    img.thumbnail((64, 64), Image.LANCZOS)
+                    if img.size != (64, 64):
+                        canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+                        canvas.paste(img, ((64 - img.size[0]) // 2, (64 - img.size[1]) // 2))
+                        img = canvas
+                    img.save(out_webp, format="WEBP", quality=82, method=6)
                     return True
                 except Exception as ex:
                     print(f"  logo err {ticker}: {ex}")

@@ -474,28 +474,50 @@ function render() {
     tbody.innerHTML = "";
   }
 
-  const seen = new Set();
-  const frag = document.createDocumentFragment();
-  visible.forEach((a, i) => {
-    seen.add(a.ticker);
-    let entry = rowMap.get(a.ticker);
-    if (!entry) {
-      entry = buildRow(a);
-      rowMap.set(a.ticker, entry);
-    }
-    updateRow(entry, a, mcapRank.get(a) || (i + 1));
-    frag.appendChild(entry.tr);  // appendChild moves nodes, doesn't clone
-  });
+  // Only chunk when we have a lot of NEW rows to build (i.e. first render
+  // after a fresh API fetch). On filter / sort changes the rows already
+  // exist in rowMap, so reordering is cheap and rendering must be atomic
+  // to avoid flicker.
+  const newRowCount = visible.reduce((n, a) => n + (rowMap.has(a.ticker) ? 0 : 1), 0);
+  const CHUNK_THRESHOLD = 200;
 
-  // Drop rows that fell out of the visible set (filter unchecked, or asset gone)
+  function processSlice(slice, baseIdx) {
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < slice.length; i++) {
+      const a = slice[i];
+      let entry = rowMap.get(a.ticker);
+      if (!entry) {
+        entry = buildRow(a);
+        rowMap.set(a.ticker, entry);
+      }
+      updateRow(entry, a, mcapRank.get(a) || (baseIdx + i + 1));
+      frag.appendChild(entry.tr);
+    }
+    tbody.appendChild(frag);
+  }
+
+  // Drop rows that are no longer in the visible set
+  const visibleTickers = new Set(visible.map(a => a.ticker));
   for (const [ticker, entry] of rowMap) {
-    if (!seen.has(ticker)) {
+    if (!visibleTickers.has(ticker)) {
       entry.tr.remove();
       rowMap.delete(ticker);
     }
   }
 
-  tbody.appendChild(frag);
+  if (newRowCount > CHUNK_THRESHOLD) {
+    // First render with many new rows — split for fast time-to-interactive
+    const FIRST_PAINT = 100;
+    processSlice(visible.slice(0, FIRST_PAINT), 0);
+    if (visible.length > FIRST_PAINT) {
+      const idleCb = window.requestIdleCallback || (cb => setTimeout(cb, 16));
+      idleCb(() => processSlice(visible.slice(FIRST_PAINT), FIRST_PAINT));
+    }
+  } else {
+    // Steady state — render all synchronously, no flicker
+    processSlice(visible, 0);
+  }
+
   updateSortIndicators();
   updateStatus();
 }

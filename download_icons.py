@@ -27,8 +27,21 @@ TWEMOJI = "https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/72x72/{}.pn
 
 
 def save(path: Path, content: bytes):
+    """Save image as 64x64 WebP at the given path (which should end .webp)."""
+    from PIL import Image
+    import io
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(content)
+    try:
+        img = Image.open(io.BytesIO(content)).convert("RGBA")
+    except Exception:
+        path.write_bytes(content)  # not a parsable image — fall back
+        return
+    img.thumbnail((64, 64), Image.LANCZOS)
+    if img.size != (64, 64):
+        canvas = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+        canvas.paste(img, ((64 - img.size[0]) // 2, (64 - img.size[1]) // 2))
+        img = canvas
+    img.save(path, format="WEBP", quality=82, method=6)
 
 
 def get(url: str, *, impersonate: bool = False, timeout: int = 20) -> bytes | None:
@@ -57,7 +70,7 @@ def download_crypto():
     n_ok = n_skip = 0
     for c in coins:
         ticker = (c.get("symbol") or "").upper()
-        path = out_dir / f"{ticker}.png"
+        path = out_dir / f"{ticker}.webp"
         if path.exists():
             n_skip += 1
             continue
@@ -89,7 +102,7 @@ def download_public():
     out_dir = ICONS / "public"
     n_ok = n_skip = n_fail = 0
     for ticker, domain in DOMAINS.items():
-        path = out_dir / f"{ticker}.png"
+        path = out_dir / f"{ticker}.webp"
         if path.exists():
             n_skip += 1
             continue
@@ -109,7 +122,7 @@ def download_private():
     entries = json.loads((ROOT / "private_companies.json").read_text())
     n_ok = n_skip = n_fail = 0
     for e in entries:
-        path = out_dir / f"{e['ticker']}.png"
+        path = out_dir / f"{e['ticker']}.webp"
         if path.exists():
             n_skip += 1
             continue
@@ -132,7 +145,7 @@ def download_fiat():
     entries = json.loads((ROOT / "fiat_m2.json").read_text())
     n_ok = n_skip = 0
     for e in entries:
-        path = out_dir / f"{e['ticker']}.png"
+        path = out_dir / f"{e['ticker']}.webp"
         if path.exists():
             n_skip += 1
             continue
@@ -152,7 +165,7 @@ def download_emoji_set(category: str, json_file: str):
     entries = json.loads((ROOT / json_file).read_text())
     n_ok = n_skip = 0
     for e in entries:
-        path = out_dir / f"{e['ticker']}.png"
+        path = out_dir / f"{e['ticker']}.webp"
         if path.exists():
             n_skip += 1
             continue
