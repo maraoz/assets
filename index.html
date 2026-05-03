@@ -211,7 +211,7 @@
 </main>
 <footer>
   <span id="status">Loading…</span>
-  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.png" alt="" class="casa-logo"></a></span>
+  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.svg" alt="" class="casa-logo"></a></span>
 </footer>
 <script>
 const state = {
@@ -433,10 +433,19 @@ function render() {
 
   if (visible.length === 0) {
     rowMap.clear();
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">No assets match current filters.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px 24px;color:var(--muted)">
+      <img src="/icons/casa-araoz.svg" alt="" style="width:64px;height:64px;opacity:0.35;filter:grayscale(1);display:block;margin:0 auto 12px"/>
+      No assets match current filters.
+    </td></tr>`;
     updateSortIndicators();
     updateStatus();
     return;
+  }
+
+  // Returning from empty state: tbody still has the placeholder <tr> (it was
+  // never tracked in rowMap), so the appendChild loop below wouldn't remove it.
+  if (rowMap.size === 0 && tbody.firstChild) {
+    tbody.innerHTML = "";
   }
 
   const seen = new Set();
