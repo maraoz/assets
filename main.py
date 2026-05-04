@@ -67,13 +67,19 @@ ICONS_DIR = ROOT / "icons"
 ICONS_DIR.mkdir(exist_ok=True)
 app.mount("/icons", StaticFiles(directory=str(ICONS_DIR)), name="icons")
 
+# Self-hosted webfonts (IBM Plex Sans/Mono, latin + latin-ext woff2 subsets)
+FONTS_DIR = ROOT / "fonts"
+if FONTS_DIR.exists():
+    app.mount("/fonts", StaticFiles(directory=str(FONTS_DIR)), name="fonts")
+
 
 @app.middleware("http")
-async def cache_icons(request, call_next):
-    """Long-lived caching for /icons/*. Safe because every icon URL carries
-    a ?v=<mtime> cache-buster, so a new mtime → new URL → fresh fetch."""
+async def cache_static(request, call_next):
+    """Long-lived caching for /icons/* and /fonts/*. Icons carry a ?v=<mtime>
+    cache-buster; font filenames are stable per IBM Plex version."""
     response = await call_next(request)
-    if request.url.path.startswith("/icons/"):
+    path = request.url.path
+    if path.startswith("/icons/") or path.startswith("/fonts/"):
         response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     return response
 

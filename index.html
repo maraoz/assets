@@ -6,9 +6,7 @@
 <title>All Assets Tracker</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/favicon-180.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="/fonts/fonts.css" rel="stylesheet">
 <style>
   :root {
     /* Surfaces */
@@ -821,6 +819,11 @@ function render() {
   }
 
   if (newRowCount > CHUNK_THRESHOLD) {
+    // Detach all current rows before rebuilding. Without this, appendChild
+    // on the head slice would move the new top-100 rows to the END of tbody
+    // and leave stale rows (e.g. Corn, ONDO) at the visible top for a frame
+    // until the idle callback fires.
+    tbody.replaceChildren();
     const FIRST_PAINT = 100;
     processSlice(visible.slice(0, FIRST_PAINT), 0);
     if (visible.length > FIRST_PAINT) {
