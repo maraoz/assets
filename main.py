@@ -199,13 +199,17 @@ def unify(crypto, public_snap, commodity_prices, commodity_defs, private, fiat, 
     assets = []
 
     for c in crypto:
+        # Skip long-tail coins under $1B mcap to keep the list curated.
+        mcap = c.get("market_cap")
+        if mcap is None or mcap < 1_000_000_000:
+            continue
         ticker = (c.get("symbol") or "").upper()
         assets.append({
             "category": "crypto",
             "name": c.get("name"),
             "ticker": ticker,
             "icon_url": _icon_url("crypto", ticker),
-            "market_cap_usd": c.get("market_cap"),
+            "market_cap_usd": mcap,
             "price_usd": c.get("current_price"),
             "change_24h": c.get("price_change_percentage_24h_in_currency"),
             "change_7d": c.get("price_change_percentage_7d_in_currency"),
