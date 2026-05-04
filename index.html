@@ -838,12 +838,12 @@ function render() {
 }
 
 function updateSortIndicators(visible) {
-  // Toggle data-sortable on the per-period % columns based on whether any
-  // visible row actually has data. Public stocks/private/fiat/misc all lack
-  // 7d/30d/1y, so when only those are checked, those headers should be inert.
-  const periodKeys = ["change_7d", "change_30d", "change_1y"];
+  // Toggle data-sortable on columns whose value can be null for whole
+  // categories. When the visible set has nothing for that column, the
+  // header is inert (no sort glyph, no click).
+  const dynamicKeys = ["price_usd", "change_24h", "change_7d", "change_30d", "change_1y"];
   const hasData = {};
-  for (const k of periodKeys) {
+  for (const k of dynamicKeys) {
     hasData[k] = visible ? visible.some(a => a[k] != null) : true;
   }
   document.querySelectorAll("#head th").forEach(th => {
@@ -851,8 +851,7 @@ function updateSortIndicators(visible) {
     if (oldMark) oldMark.remove();
 
     const key = th.dataset.key;
-    const isPeriodCol = periodKeys.includes(key);
-    if (isPeriodCol) {
+    if (dynamicKeys.includes(key)) {
       if (hasData[key]) th.setAttribute("data-sortable", "1");
       else th.removeAttribute("data-sortable");
     }
