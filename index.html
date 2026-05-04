@@ -6,127 +6,366 @@
 <title>All Assets Tracker</title>
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --border: #e4e4e7;
-    --text: #18181b;
-    --muted: #71717a;
-    --pos: #16a34a;
-    --neg: #dc2626;
+    /* Surfaces */
+    --bg:        #f4f0e8;
+    --bg-2:      #ece7dc;
+    --card:      #fdfcf8;
+    --card-2:    #faf7ee;
+
+    /* Ink */
+    --ink:       #1a1a1a;
+    --ink-2:     #2a2a2a;
+    --ink-3:     #5a5a5a;
+    --ink-mute:  #8a8378;
+
+    /* Rules */
+    --rule:      #d9d2c4;
+    --rule-soft: #e6dfd0;
+
+    /* Semantic */
+    --pos:       #1a7a3e;
+    --neg:       #b7300d;
+    --live-dot:  #22a861;
+
+    /* Honey accent */
+    --accent-tint: #FBE9A6;
+    --accent-row:  #FFF7DA;
+    --accent-chip: #F4E29B;
+    --accent-text: #3a2a07;
+
+    /* Type */
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
-    margin: 0;
-    font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: var(--text);
-    background: #EFE7DA;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,255,255,0.5), transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(0,0,0,0.015), transparent 40%);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
-  header {
-    padding: 12px 20px;
-    border-bottom: 1px solid var(--border);
-    background: #ffffff;
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 28px 64px;
   }
-  .filters {
+
+  /* ───── HERO ───── */
+  .hero {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 4px 0 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 16px;
     flex-wrap: wrap;
-    gap: 14px;
   }
-  .filters label {
+  .hero-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .hero-crest { display: inline-flex; align-items: center; }
+  .hero-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink);
+  }
+  .hero-tag {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .hero-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .stat { display: inline-flex; align-items: baseline; gap: 6px; }
+  .stat-num {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .stat-sep { color: var(--ink-mute); opacity: 0.5; }
+
+  /* ───── TOOLBAR ───── */
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 18px 0 14px;
+    align-items: center;
+  }
+  .search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 9px 14px;
+    width: min(520px, 100%);
+    color: var(--ink-mute);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 4px 14px -8px rgba(0,0,0,0.08);
+    transition: border-color 120ms, box-shadow 120ms;
+  }
+  .search:focus-within {
+    border-color: var(--ink-2);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 6px 18px -8px rgba(0,0,0,0.18);
+  }
+  .search input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .search input::placeholder { color: var(--ink-mute); }
+
+  .chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  /* Off = transparent outline, muted text, empty box. On = soft per-category
+     tint, dark text, dark-filled box with light check. */
+  .ftr-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 4px 11px 4px 8px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-mute);
     cursor: pointer;
-    font-size: 13px;
+    transition: all 120ms;
     user-select: none;
   }
-  main { padding: 20px 48px 60px; background: #ffffff; }
-  header { padding: 14px 48px; }
-  footer { padding: 14px 48px; }
+  .ftr-chip:hover { color: var(--ink-3); border-color: var(--ink-mute); }
+  .ftr-chk {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border: 1.2px solid var(--ink-mute);
+    background: transparent;
+    display: inline-grid;
+    place-items: center;
+    color: transparent;
+    flex-shrink: 0;
+    transition: all 120ms;
+  }
+  .ftr-chip[data-active="true"] .ftr-chk {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--card);
+  }
+  /* Each chip's active fill matches its category row tint, with a darker
+     same-hue text. Quiet enough to coexist, distinctive per category. */
+  .ftr-chip[data-active="true"][data-cat="public"]    { background: #ffffff; border-color: #e6e0d0; color: var(--ink); }
+  .ftr-chip[data-active="true"][data-cat="commodity"] { background: #fbf3df; border-color: #ebe1bc; color: #5c4515; }
+  .ftr-chip[data-active="true"][data-cat="fiat"]      { background: #eaf3e6; border-color: #cbe1c1; color: #20461d; }
+  .ftr-chip[data-active="true"][data-cat="crypto"]    { background: #f1ecfb; border-color: #d8cdee; color: #3a2270; }
+  .ftr-chip[data-active="true"][data-cat="private"]   { background: #fbecec; border-color: #edc8c8; color: #6d2222; }
+  .ftr-chip[data-active="true"][data-cat="misc"]      { background: #f3eee5; border-color: #d6cbb6; color: #4d3f25; }
+
+  .ftr-count {
+    font-variant-numeric: tabular-nums;
+    font-size: 10.5px;
+    color: var(--ink-mute);
+    opacity: 0.7;
+  }
+  .ftr-chip[data-active="true"] .ftr-count {
+    color: currentColor;
+    opacity: 0.55;
+  }
+
+  /* ───── CARD / TABLE ───── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    /* No overflow: hidden — that would trap thead's position:sticky inside
+       the card. Headers should stick to the page scroll instead. */
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 1px 2px rgba(0,0,0,0.03),
+      0 24px 60px -32px rgba(40,30,10,0.18);
+    margin-top: 8px;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
     background: transparent;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
     table-layout: fixed;
   }
   th, td {
-    padding: 8px 10px;
+    padding: 0 10px;
     text-align: right;
-    border-bottom: 1px solid var(--border);
     white-space: nowrap;
+    height: 42px;
   }
+  th:first-child, td:first-child { padding-left: 18px; }
+  th:last-child,  td:last-child  { padding-right: 18px; }
   th:nth-child(1), th:nth-child(2),
   td:nth-child(1), td:nth-child(2) { text-align: left; }
   th:nth-child(1), td:nth-child(1) { width: 56px; }
-  th:nth-child(3), td:nth-child(3),
+  th:nth-child(3), td:nth-child(3) { width: 130px; }
   th:nth-child(4), td:nth-child(4) { width: 110px; }
   th:nth-child(5), td:nth-child(5),
   th:nth-child(6), td:nth-child(6),
   th:nth-child(7), td:nth-child(7),
   th:nth-child(8), td:nth-child(8) { width: 80px; }
-  td:nth-child(2) strong {
-    display: inline-block;
-    max-width: calc(100% - 130px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
-  }
-  th {
-    background: #f4f4f5;
+  thead th {
+    background: var(--card-2);
+    border-bottom: 1px solid var(--rule);
     font-weight: 600;
+    font-size: 11px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     cursor: pointer;
     user-select: none;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
   }
-  th .arrow { color: var(--muted); margin-left: 4px; font-size: 11px; }
-  tr.category-public    { background: #ffffff; }
-  tr.category-private   { background: #f4f4f5; }
-  tr.category-crypto    { background: #f5f0fa; }
-  tr.category-commodity { background: #fdf6dc; }
-  tr.category-fiat      { background: #eef7ee; }
-  tr.category-misc      { background: #eef3fb; }
-  tbody tr { transition: box-shadow 120ms ease; }
-  tbody tr:hover {
-    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.04);
+  thead th:first-child { border-top-left-radius: 14px; }
+  thead th:last-child  { border-top-right-radius: 14px; }
+  tbody tr:last-child td:first-child { border-bottom-left-radius: 14px; }
+  tbody tr:last-child td:last-child  { border-bottom-right-radius: 14px; }
+  thead th[data-key="rank"], thead th[data-key="name"] { cursor: default; }
+  thead th:hover[data-sortable="1"] { color: var(--ink); }
+  thead th[data-sort-active="1"] { color: var(--ink); }
+  .sort-mark { font-size: 9px; margin-left: 2px; }
+  .sort-mark.muted { opacity: 0.3; }
+  tbody td {
+    border-bottom: 1px solid var(--rule-soft);
+    font-size: 14px;
+    color: var(--ink);
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
   }
-  .ticker { color: var(--muted); margin-left: 6px; font-size: 12px; }
+  tbody tr:last-child td { border-bottom: 0; }
+
+  /* class tints */
+  tr.category-public    { background: transparent; }
+  tr.category-commodity { background: #fbf3df; }
+  tr.category-fiat      { background: #eaf3e6; }
+  tr.category-crypto    { background: #f1ecfb; }
+  tr.category-private   { background: #fbecec; }
+  tr.category-misc      { background: #f3eee5; }
+  /* Hover stays in the row's own category tint, just slightly darker. The
+     inset shadow tints any underlying color uniformly without picking a
+     fixed color, so each category's tint is preserved. */
+  tbody tr { transition: box-shadow 100ms; }
+  tbody tr:hover { box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.05); }
+
+  td:nth-child(1) {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-mute);
+  }
+  td:nth-child(2) {
+    overflow: hidden;
+  }
+  .name-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
   .icon {
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
     object-fit: contain;
-    vertical-align: middle;
-    margin-right: 8px;
+    flex-shrink: 0;
   }
   .icon[data-fallback] { display: none; }
-  .casa-logo-link { display: inline-block; line-height: 0; }
-  .casa-logo {
-    width: 14px;
-    height: 14px;
-    vertical-align: -3px;
-    margin-left: 4px;
+  .name-stack {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.2;
   }
-  .cat-tag {
-    display: inline-block;
-    margin-left: 6px;
+  .name {
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .tkr-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .tkr {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--accent-text);
+    background: var(--accent-tint);
     padding: 1px 6px;
     border-radius: 3px;
-    font-size: 10px;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: rgba(0,0,0,0.04);
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
   }
+  .tkr-type {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  td:nth-child(3) { font-weight: 600; }
+
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .muted { color: var(--ink-mute); }
+
+  /* method tooltip glyph */
   .method-icon {
     position: relative;
     display: inline-flex;
     vertical-align: middle;
     margin-left: 6px;
-    color: var(--muted);
+    color: var(--ink-mute);
   }
   .method-icon svg { display: block; }
   .method-icon::after {
@@ -135,8 +374,8 @@
     bottom: calc(100% + 6px);
     left: 50%;
     transform: translateX(-50%);
-    background: #18181b;
-    color: #fafafa;
+    background: var(--ink);
+    color: var(--card);
     font-size: 11px;
     line-height: 1.3;
     padding: 5px 8px;
@@ -148,97 +387,172 @@
     z-index: 10;
   }
   .method-icon:hover::after { opacity: 1; }
-  .pos { color: var(--pos); }
-  .neg { color: var(--neg); }
-  .muted { color: var(--muted); }
-  .live-dot {
-    display: inline-block;
+
+  /* ───── STICKY FOOTER ───── */
+  .foot {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: rgba(236, 231, 220, 0.88);
+    border-top: 1px solid var(--rule);
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--ink-3);
+    font-size: 12px;
+    z-index: 10;
+    backdrop-filter: blur(6px);
+  }
+  .foot-left, .foot-right { display: flex; align-items: center; gap: 8px; }
+  .foot-dot {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: 0;
+    border-radius: 999px;
+    background: var(--live-dot);
+    box-shadow: 0 0 0 3px rgba(34,168,97,0.18);
+    display: inline-block;
+    cursor: default;
   }
-  .live-dot.ok  { background: var(--pos); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); animation: pulse 2s infinite; }
-  .live-dot.err { background: var(--neg); }
-  @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.45); }
-    70%  { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+  .foot-dot.err {
+    background: var(--neg);
+    box-shadow: 0 0 0 3px rgba(183,48,13,0.18);
   }
-  footer {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-    background: #EFE7DA;
+  .foot-count {
     font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    position: sticky;
-    bottom: 0;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .foot-right p { margin: 0; display: inline-flex; align-items: center; gap: 6px; }
+  .foot-right .author { color: var(--ink); font-weight: 600; text-decoration: none; }
+  .foot-right .author:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .foot-crest { display: inline-flex; align-items: center; line-height: 0; }
+
+  /* empty-state / loading-state crest */
+  .crest-empty {
+    opacity: 0.35;
+    filter: grayscale(1);
+    display: block;
+    margin: 0 auto 12px;
+  }
+  .crest-pulse { animation: crest-pulse 1.6s ease-in-out infinite; }
+  @keyframes crest-pulse {
+    0%, 100% { opacity: 0.25; }
+    50%      { opacity: 0.55; }
   }
 
-  @media (max-width: 768px) {
-    header, main, footer { padding-left: 14px; padding-right: 14px; }
-    .filters { gap: 10px; font-size: 12px; }
-    th, td { padding: 6px 6px; font-size: 12.5px; }
-    th:nth-child(1), td:nth-child(1) { width: 32px; }
-    th:nth-child(2), td:nth-child(2) { width: auto; }
-    td:nth-child(2) strong { max-width: calc(100% - 70px); }
-    th:nth-child(3), td:nth-child(3) { width: 84px; }
-    th:nth-child(4), td:nth-child(4) { width: 72px; }
-    th:nth-child(5), td:nth-child(5) { width: 64px; }
-    th:nth-child(6), td:nth-child(6),
-    th:nth-child(7), td:nth-child(7),
+  /* responsive */
+  /* Staircase the column hides so the Name column grows in single-column
+     steps instead of all 240px at once. */
+
+  /* ≤880px: hide 1y → 7d is rightmost */
+  @media (max-width: 880px) {
+    .page { padding: 18px 14px 64px; }
+    .hero-tag { display: none; }
+    .hero-title { font-size: 16px; }
+    .hero-stats { font-size: 12px; gap: 10px; }
     th:nth-child(8), td:nth-child(8) { display: none; }
-    .icon { width: 18px; height: 18px; margin-right: 6px; }
-    .cat-tag { font-size: 9px; padding: 1px 4px; }
+    thead th:nth-child(7) { border-top-right-radius: 14px; }
+    tbody tr:last-child td:nth-child(7) { border-bottom-right-radius: 14px; }
   }
 
-  @media (max-width: 480px) {
+  /* ≤720px: also hide 30d → 7d still rightmost (but col 7 hidden, so 6) */
+  @media (max-width: 720px) {
+    th:nth-child(7), td:nth-child(7) { display: none; }
+    thead th:nth-child(6) { border-top-right-radius: 14px; }
+    tbody tr:last-child td:nth-child(6) { border-bottom-right-radius: 14px; }
+  }
+
+  /* ≤600px: also hide 7d → 24h (col 5) is rightmost */
+  @media (max-width: 600px) {
+    th:nth-child(6), td:nth-child(6) { display: none; }
+    th:nth-child(5), td:nth-child(5) { padding-right: 14px; }
+    thead th:nth-child(5) { border-top-right-radius: 14px; }
+    tbody tr:last-child td:nth-child(5) { border-bottom-right-radius: 14px; }
+    th:nth-child(1), td:nth-child(1) { width: 40px; padding-left: 14px; }
+    th:nth-child(3), td:nth-child(3) { width: 110px; }
+    th:nth-child(4), td:nth-child(4) { width: 90px; }
+    th:nth-child(5), td:nth-child(5) { width: 70px; }
+    th, td { font-size: 12.5px; }
+    .icon { width: 20px; height: 20px; }
+  }
+
+  /* ≤540px: also hide Price → 24h still rightmost */
+  @media (max-width: 540px) {
+    .hero-stats .stat:not(:first-child),
+    .hero-stats .stat-sep { display: none; }
     th:nth-child(4), td:nth-child(4) { display: none; }
-    .cat-tag { display: none; }
-    .ticker { display: none; }
-    td:nth-child(2) strong { max-width: 100%; }
-    .filters label { gap: 4px; }
-    h1 { font-size: 16px; }
+    .tkr-type { display: none; }
+    .name { font-size: 13px; }
   }
 </style>
 </head>
 <body>
-<header>
-  <div class="filters" id="filters">
-    <label><input type="checkbox" data-cat="public" checked>Public companies</label>
-    <label><input type="checkbox" data-cat="private" checked>Private companies</label>
-    <label><input type="checkbox" data-cat="crypto" checked>Crypto</label>
-    <label><input type="checkbox" data-cat="commodity" checked>Commodities</label>
-    <label><input type="checkbox" data-cat="fiat" checked>Fiat (M2)</label>
-    <label><input type="checkbox" data-cat="misc" checked>Misc</label>
+<div class="page">
+
+  <header class="hero">
+    <div class="hero-left">
+      <span class="hero-crest" aria-hidden>
+        <img src="/icons/casa-araoz.svg" alt="" width="24" height="28">
+      </span>
+      <h1 class="hero-title">All Assets Tracker</h1>
+      <p class="hero-tag">Every asset class on Earth, ranked by market cap.</p>
+    </div>
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat"><span class="stat-num" id="hero-count">—</span><span class="stat-lbl">assets tracked</span></div>
+      <span class="stat-sep">·</span>
+      <div class="stat"><span class="stat-num" id="hero-mcap">—</span><span class="stat-lbl">total market cap</span></div>
+      <span class="stat-sep">·</span>
+      <div class="stat"><span class="stat-num" id="hero-updated">—</span><span class="stat-lbl">last updated</span></div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+        <circle cx="6" cy="6" r="4.2" fill="none" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M9.2 9.2 L12.5 12.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Search by name or ticker…" autocomplete="off">
+    </label>
+    <div class="chips" id="filters"></div>
   </div>
-</header>
-<main>
-  <table>
-    <thead>
-      <tr id="head">
-        <th data-key="rank">#</th>
-        <th data-key="name">Name</th>
-        <th data-key="market_cap_usd">Market Cap<span class="arrow">▼</span></th>
-        <th data-key="price_usd">Price</th>
-        <th data-key="change_24h">24h %</th>
-        <th data-key="change_7d">7d %</th>
-        <th data-key="change_30d">30d %</th>
-        <th data-key="change_1y">1y %</th>
-      </tr>
-    </thead>
-    <tbody id="rows"></tbody>
-  </table>
-</main>
-<footer>
-  <span id="status">Loading…</span>
-  <span>Made by <a href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a> <a href="https://araoz.net" target="_blank" rel="noopener" class="casa-logo-link"><img src="/icons/casa-araoz.svg" alt="" width="14" height="14" class="casa-logo"></a></span>
+
+  <main class="card">
+    <table>
+      <thead>
+        <tr id="head">
+          <th data-key="rank">#</th>
+          <th data-key="name">Name</th>
+          <th data-key="market_cap_usd" data-sortable="1">Market Cap</th>
+          <th data-key="price_usd" data-sortable="1">Price</th>
+          <th data-key="change_24h" data-sortable="1">24h</th>
+          <th data-key="change_7d" data-sortable="1">7d</th>
+          <th data-key="change_30d" data-sortable="1">30d</th>
+          <th data-key="change_1y" data-sortable="1">1y</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="foot-left">
+    <span class="foot-dot" id="status-dot" title="Live"></span>
+    <span class="foot-count" id="status-count">— assets</span>
+  </div>
+  <div class="foot-right">
+    <p>
+      <span>Made by</span>
+      <a class="author" href="https://araoz.net" target="_blank" rel="noopener">Casa Araoz</a>
+      <a class="foot-crest" href="https://araoz.net" target="_blank" rel="noopener" aria-hidden>
+        <img src="/icons/casa-araoz.svg" alt="" width="14" height="14">
+      </a>
+    </p>
+  </div>
 </footer>
+
 <script>
 const state = {
   assets: [],
@@ -247,18 +561,21 @@ const state = {
   sortKey: "market_cap_usd",
   sortDir: -1,
   filters: { public: true, private: true, crypto: true, commodity: true, fiat: true, misc: true },
+  query: "",  // search text, ephemeral (not persisted)
 };
 
-const STORAGE_KEY = "assets-tracker-state-v1";
 const ALL_CATS = ["public", "private", "crypto", "commodity", "fiat", "misc"];
 
-// Short codes for compact URLs. Two letters because public/private and
-// crypto/commodity collide on the first letter.
+const CHIP_LABELS = {
+  public: "Public companies", private: "Private companies", crypto: "Crypto",
+  commodity: "Commodities", fiat: "Fiat (M2)", misc: "Misc",
+};
+
 const CAT_SHORT = { public: "pu", private: "pr", crypto: "cr", commodity: "co", fiat: "fi", misc: "mi" };
 const CAT_LONG = Object.fromEntries(Object.entries(CAT_SHORT).map(([k, v]) => [v, k]));
 
 const KEY_SHORT = {
-  name: "n", market_cap_usd: "mc", price_usd: "p",
+  market_cap_usd: "mc", price_usd: "p",
   change_24h: "c1", change_7d: "c7", change_30d: "c30", change_1y: "cy",
 };
 const KEY_LONG = Object.fromEntries(Object.entries(KEY_SHORT).map(([k, v]) => [v, k]));
@@ -276,47 +593,24 @@ function parseHash() {
 }
 
 function loadInitialState() {
+  // URL hash is the only source of state. No localStorage — visiting a clean
+  // URL always starts fresh (all filters on, default sort).
   const params = parseHash();
-
   if (params.has("c")) {
     const on = new Set(params.get("c").split(",").map(s => CAT_LONG[s]).filter(Boolean));
     ALL_CATS.forEach(c => { state.filters[c] = on.has(c); });
-  } else {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw);
-        if (saved.filters) {
-          ALL_CATS.forEach(c => {
-            if (typeof saved.filters[c] === "boolean") state.filters[c] = saved.filters[c];
-          });
-        }
-        if (typeof saved.sortKey === "string") state.sortKey = saved.sortKey;
-        if (saved.sortDir === 1 || saved.sortDir === -1) state.sortDir = saved.sortDir;
-      }
-    } catch {}
   }
-
   if (params.has("s")) {
     let s = params.get("s");
-    let dir = 1;  // bare = asc
+    let dir = 1;
     if (s.startsWith("-"))      { dir = -1; s = s.slice(1); }
     else if (s.startsWith("+")) { dir =  1; s = s.slice(1); }
     const longKey = KEY_LONG[s];
-    if (longKey) {
-      state.sortKey = longKey;
-      state.sortDir = dir;
-    }
+    if (longKey) { state.sortKey = longKey; state.sortDir = dir; }
   }
-
-  document.querySelectorAll("#filters input").forEach(el => {
-    el.checked = !!state.filters[el.dataset.cat];
-  });
 }
 
 function persistState() {
-  // Build the hash by hand so commas stay literal (URLSearchParams encodes
-  // them as %2C, which is ugly in shareable URLs).
   const parts = [];
   const offCount = ALL_CATS.filter(c => !state.filters[c]).length;
   if (offCount > 0) {
@@ -330,14 +624,6 @@ function persistState() {
   }
   const hash = parts.length ? "#" + parts.join("&") : "";
   history.replaceState(null, "", location.pathname + hash);
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      filters: state.filters,
-      sortKey: state.sortKey,
-      sortDir: state.sortDir,
-    }));
-  } catch {}
 }
 
 const fmtMcap = (v) => {
@@ -348,7 +634,6 @@ const fmtMcap = (v) => {
   if (abs >= 1e6)  return "$" + (v / 1e6).toFixed(2)  + "M";
   return "$" + Math.round(v).toLocaleString();
 };
-
 const fmtPrice = (v) => {
   if (v === null || v === undefined || !isFinite(v)) return "—";
   if (v >= 1000) return "$" + v.toLocaleString(undefined, { maximumFractionDigits: 0 });
@@ -356,22 +641,46 @@ const fmtPrice = (v) => {
   if (v >= 0.01) return "$" + v.toFixed(4);
   return "$" + v.toPrecision(3);
 };
-
 const fmtPct = (v) => {
   if (v === null || v === undefined || !isFinite(v)) return '<span class="muted">—</span>';
   const sign = v >= 0 ? "+" : "";
   const cls = v >= 0 ? "pos" : "neg";
   return `<span class="${cls}">${sign}${v.toFixed(2)}%</span>`;
 };
-
-const catLabel = {
-  public: "public", private: "private", crypto: "crypto",
-  commodity: "commodity", fiat: "fiat M2", misc: "misc",
+const fmtDate = (unix) => {
+  if (!unix) return "—";
+  const d = new Date(unix * 1000);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 };
 
-// Keyed row map so we never recreate <tr> / <img> elements across renders;
-// rebuilding the DOM every tick made every <img> re-decode and flicker.
-const rowMap = new Map();  // ticker -> { tr, cells, lastCategory }
+const TYPE_LABELS = {
+  public: "Public", private: "Private", crypto: "Crypto",
+  commodity: "Commodity", fiat: "Fiat M2", misc: "Misc",
+};
+
+const rowMap = new Map();
+
+function methodIcon(method) {
+  if (method === "stock") {
+    return `<span class="method-icon" data-tip="Above-ground stock × spot price" aria-label="stock">`
+      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">`
+      + `<rect x="3" y="11" width="10" height="2" rx="0.5"/><rect x="4" y="8" width="8" height="2" rx="0.5"/>`
+      + `<rect x="5" y="5" width="6" height="2" rx="0.5"/></svg></span>`;
+  }
+  if (method === "flow") {
+    return `<span class="method-icon" data-tip="Annual production × spot price" aria-label="flow">`
+      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">`
+      + `<path d="M12.5 8 a4.5 4.5 0 1 1 -1.4 -3.2"/>`
+      + `<path d="M12.5 3 L12.5 5.5 L10 5.5" stroke-linejoin="round"/></svg></span>`;
+  }
+  return "";
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
 
 function buildRow(a) {
   const tr = document.createElement("tr");
@@ -388,20 +697,28 @@ function buildRow(a) {
   cells.ch1y  = tr.insertCell();
 
   const iconImg = a.icon_url
-    ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" width="22" height="22" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
-    : "";
-  // Misc/private/commodity tickers are synthetic labels (GLOBAL_BONDS, OPENAI,
-  // GOLD…) — hide them. Public/crypto/fiat tickers are real, keep.
-  const realTickerCategories = new Set(["public", "crypto", "fiat"]);
-  const tickerSpan = realTickerCategories.has(a.category) && a.ticker
-    ? ` <span class="ticker">${escapeHtml(a.ticker)}</span>`
-    : "";
+    ? `<img class="icon" src="${escapeHtml(a.icon_url)}" alt="" width="24" height="24" loading="lazy" onerror="this.setAttribute('data-fallback','1')">`
+    : `<span class="icon" aria-hidden></span>`;
+
+  // Synthetic tickers (GLOBAL_BONDS, OPENAI, GOLD…) get hidden — only public,
+  // crypto, fiat have real exchange tickers worth showing.
+  const showTicker = ["public", "crypto", "fiat"].includes(a.category) && a.ticker;
+  const tkrRow =
+    `<span class="tkr-row">` +
+    (showTicker ? `<span class="tkr">${escapeHtml(a.ticker)}</span>` : "") +
+    `<span class="tkr-type">${TYPE_LABELS[a.category] || a.category}</span>` +
+    methodIcon(a.method) +
+    `</span>`;
+
+  // title= lets the user hover to see the full name when it's truncated
+  // by ellipsis (and on touch devices, long-press surfaces it).
+  const nameStr = a.name || "";
   cells.name.innerHTML =
-    iconImg +
-    `<strong>${escapeHtml(a.name || "")}</strong>` +
-    tickerSpan +
-    ` <span class="cat-tag">${catLabel[a.category] || a.category}</span>` +
-    methodIcon(a.method);
+    `<div class="name-cell">${iconImg}` +
+    `<div class="name-stack">` +
+    `<span class="name" title="${escapeHtml(nameStr)}">${escapeHtml(nameStr)}</span>` +
+    tkrRow +
+    `</div></div>`;
 
   return { tr, cells, lastCategory: a.category };
 }
@@ -422,10 +739,15 @@ function updateRow(entry, a, rank) {
 }
 
 function render() {
-  const visible = state.assets.filter(a => state.filters[a.category]);
+  const q = state.query.trim().toLowerCase();
+  const visible = state.assets.filter(a => {
+    if (!state.filters[a.category]) return false;
+    if (!q) return true;
+    return (a.name || "").toLowerCase().includes(q)
+        || (a.ticker || "").toLowerCase().includes(q);
+  });
 
-  // Rank is always by market cap among the visible set, regardless of how
-  // the user is sorting — Gold stays #3 even when you sort by name.
+  // Rank by market cap among visible — Gold stays #3 even when sorting by name.
   const mcapRank = new Map();
   [...visible]
     .sort((a, b) => {
@@ -442,8 +764,7 @@ function render() {
   const dir = state.sortDir;
   const key = state.sortKey;
   visible.sort((a, b) => {
-    const av = a[key];
-    const bv = b[key];
+    const av = a[key], bv = b[key];
     const aNull = av === null || av === undefined || (typeof av === "number" && !isFinite(av));
     const bNull = bv === null || bv === undefined || (typeof bv === "number" && !isFinite(bv));
     if (aNull && bNull) return 0;
@@ -459,25 +780,20 @@ function render() {
 
   if (visible.length === 0) {
     rowMap.clear();
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px 24px;color:var(--muted)">
-      <img src="/icons/casa-araoz.svg" alt="" width="64" height="64" style="opacity:0.35;filter:grayscale(1);display:block;margin:0 auto 12px"/>
-      No assets match current filters.
+    const isLoading = state.lastUpdated === 0;
+    const message = isLoading ? "Loading assets…" : "No assets match current filters.";
+    const imgClass = isLoading ? "crest-empty crest-pulse" : "crest-empty";
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:48px 24px;color:var(--ink-mute);height:auto">
+      <img src="/icons/casa-araoz.svg" alt="" width="64" height="64" class="${imgClass}"/>
+      ${message}
     </td></tr>`;
-    updateSortIndicators();
+    updateSortIndicators(visible);
     updateStatus();
     return;
   }
 
-  // Returning from empty state: tbody still has the placeholder <tr> (it was
-  // never tracked in rowMap), so the appendChild loop below wouldn't remove it.
-  if (rowMap.size === 0 && tbody.firstChild) {
-    tbody.innerHTML = "";
-  }
+  if (rowMap.size === 0 && tbody.firstChild) tbody.innerHTML = "";
 
-  // Only chunk when we have a lot of NEW rows to build (i.e. first render
-  // after a fresh API fetch). On filter / sort changes the rows already
-  // exist in rowMap, so reordering is cheap and rendering must be atomic
-  // to avoid flicker.
   const newRowCount = visible.reduce((n, a) => n + (rowMap.has(a.ticker) ? 0 : 1), 0);
   const CHUNK_THRESHOLD = 200;
 
@@ -496,7 +812,6 @@ function render() {
     tbody.appendChild(frag);
   }
 
-  // Drop rows that are no longer in the visible set
   const visibleTickers = new Set(visible.map(a => a.ticker));
   for (const [ticker, entry] of rowMap) {
     if (!visibleTickers.has(ticker)) {
@@ -506,7 +821,6 @@ function render() {
   }
 
   if (newRowCount > CHUNK_THRESHOLD) {
-    // First render with many new rows — split for fast time-to-interactive
     const FIRST_PAINT = 100;
     processSlice(visible.slice(0, FIRST_PAINT), 0);
     if (visible.length > FIRST_PAINT) {
@@ -514,70 +828,111 @@ function render() {
       idleCb(() => processSlice(visible.slice(FIRST_PAINT), FIRST_PAINT));
     }
   } else {
-    // Steady state — render all synchronously, no flicker
     processSlice(visible, 0);
   }
 
-  updateSortIndicators();
+  updateSortIndicators(visible);
   updateStatus();
+  renderChips();
+  renderHeroStats();
 }
 
-function methodIcon(method) {
-  if (method === "stock") {
-    return `<span class="method-icon" data-tip="Above-ground stock × spot price" aria-label="stock">`
-      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">`
-      + `<rect x="3" y="11" width="10" height="2" rx="0.5"/>`
-      + `<rect x="4" y="8" width="8" height="2" rx="0.5"/>`
-      + `<rect x="5" y="5" width="6" height="2" rx="0.5"/>`
-      + `</svg></span>`;
+function updateSortIndicators(visible) {
+  // Toggle data-sortable on the per-period % columns based on whether any
+  // visible row actually has data. Public stocks/private/fiat/misc all lack
+  // 7d/30d/1y, so when only those are checked, those headers should be inert.
+  const periodKeys = ["change_7d", "change_30d", "change_1y"];
+  const hasData = {};
+  for (const k of periodKeys) {
+    hasData[k] = visible ? visible.some(a => a[k] != null) : true;
   }
-  if (method === "flow") {
-    return `<span class="method-icon" data-tip="Annual production × spot price" aria-label="flow">`
-      + `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">`
-      + `<path d="M12.5 8 a4.5 4.5 0 1 1 -1.4 -3.2"/>`
-      + `<path d="M12.5 3 L12.5 5.5 L10 5.5" stroke-linejoin="round"/>`
-      + `</svg></span>`;
-  }
-  return "";
-}
-
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-  }[c]));
-}
-
-function updateSortIndicators() {
   document.querySelectorAll("#head th").forEach(th => {
-    const arrow = th.querySelector(".arrow");
-    if (arrow) arrow.remove();
-    if (th.dataset.key === state.sortKey) {
-      const a = document.createElement("span");
-      a.className = "arrow";
-      a.textContent = state.sortDir === -1 ? "▼" : "▲";
-      th.appendChild(a);
+    const oldMark = th.querySelector(".sort-mark");
+    if (oldMark) oldMark.remove();
+
+    const key = th.dataset.key;
+    const isPeriodCol = periodKeys.includes(key);
+    if (isPeriodCol) {
+      if (hasData[key]) th.setAttribute("data-sortable", "1");
+      else th.removeAttribute("data-sortable");
     }
+
+    if (!th.dataset.sortable) return;
+    const isActive = key === state.sortKey;
+    const mark = document.createElement("span");
+    mark.className = "sort-mark" + (isActive ? "" : " muted");
+    mark.textContent = isActive ? (state.sortDir === -1 ? "▾" : "▴") : "↕";
+    th.appendChild(mark);
+    if (isActive) th.setAttribute("data-sort-active", "1");
+    else th.removeAttribute("data-sort-active");
   });
 }
 
 function updateStatus() {
-  const el = document.getElementById("status");
-  if (!state.lastUpdated && state.connected) {
-    el.innerHTML = `<span class="live-dot ok" title="Connecting…"></span>Loading…`;
-    return;
-  }
-  const ago = Math.max(0, Math.round(Date.now() / 1000 - state.lastUpdated));
+  const dot = document.getElementById("status-dot");
+  const count = document.getElementById("status-count");
+  const ago = state.lastUpdated
+    ? Math.max(0, Math.round(Date.now() / 1000 - state.lastUpdated))
+    : null;
   if (state.connected) {
-    el.innerHTML = `<span class="live-dot ok" title="Live — server reachable, last update ${ago}s ago"></span>${state.assets.length} assets`;
+    dot.classList.remove("err");
+    dot.title = ago != null
+      ? `Live — last update ${ago}s ago`
+      : "Connecting…";
   } else {
-    el.innerHTML = `<span class="live-dot err" title="Lost connection to server — showing last known data from ${ago}s ago"></span>${state.assets.length} assets`;
+    dot.classList.add("err");
+    dot.title = `Lost connection — last data ${ago ?? "?"}s ago`;
   }
+  count.textContent = `${state.assets.length.toLocaleString()} assets`;
+}
+
+function renderChips() {
+  const counts = {};
+  for (const c of ALL_CATS) counts[c] = 0;
+  for (const a of state.assets) counts[a.category] = (counts[a.category] || 0) + 1;
+
+  const container = document.getElementById("filters");
+  if (!container.firstChild) {
+    for (const cat of ALL_CATS) {
+      const btn = document.createElement("button");
+      btn.className = "ftr-chip";
+      btn.dataset.cat = cat;
+      btn.innerHTML =
+        `<span class="ftr-chk" aria-hidden>` +
+        `<svg width="9" height="9" viewBox="0 0 10 10">` +
+        `<path d="M1.5 5 L4 7.5 L8.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` +
+        `</svg>` +
+        `</span>` +
+        `<span class="ftr-label">${CHIP_LABELS[cat]}</span>` +
+        `<span class="ftr-count">0</span>`;
+      btn.addEventListener("click", () => {
+        state.filters[cat] = !state.filters[cat];
+        persistState();
+        render();
+      });
+      container.appendChild(btn);
+    }
+  }
+  for (const btn of container.children) {
+    const cat = btn.dataset.cat;
+    btn.dataset.active = !!state.filters[cat];
+    btn.querySelector(".ftr-count").textContent = counts[cat].toLocaleString();
+  }
+}
+
+function renderHeroStats() {
+  document.getElementById("hero-count").textContent =
+    state.assets.length ? state.assets.length.toLocaleString() : "—";
+  const totalMcap = state.assets.reduce(
+    (s, a) => s + (typeof a.market_cap_usd === "number" ? a.market_cap_usd : 0), 0);
+  document.getElementById("hero-mcap").textContent = totalMcap ? fmtMcap(totalMcap) : "—";
+  document.getElementById("hero-updated").textContent = fmtDate(state.lastUpdated);
 }
 
 document.querySelectorAll("#head th").forEach(th => {
   th.addEventListener("click", () => {
+    if (!th.dataset.sortable) return;
     const key = th.dataset.key;
-    if (!key || key === "rank") return;
     if (state.sortKey === key) state.sortDir *= -1;
     else { state.sortKey = key; state.sortDir = -1; }
     persistState();
@@ -585,12 +940,9 @@ document.querySelectorAll("#head th").forEach(th => {
   });
 });
 
-document.querySelectorAll("#filters input").forEach(el => {
-  el.addEventListener("change", () => {
-    state.filters[el.dataset.cat] = el.checked;
-    persistState();
-    render();
-  });
+document.getElementById("search-input").addEventListener("input", e => {
+  state.query = e.target.value;
+  render();
 });
 
 async function refresh() {
@@ -610,6 +962,8 @@ async function refresh() {
 }
 
 loadInitialState();
+renderChips();          // build chip DOM up-front so empty state still has them
+render();               // paint the loading state immediately
 refresh();
 setInterval(refresh, 30000);
 setInterval(updateStatus, 1000);

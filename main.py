@@ -422,6 +422,17 @@ async def index():
     return FileResponse(ROOT / "index.html")
 
 
+@app.get("/robots.txt")
+async def robots():
+    # Permissive — explicitly allow all crawlers. Overrides Cloudflare's
+    # managed robots.txt so AI-crawler blocking isn't auto-injected at the edge.
+    return Response(
+        content="User-agent: *\nAllow: /\n",
+        media_type="text/plain",
+        headers={"cache-control": "public, max-age=3600"},
+    )
+
+
 @app.get("/favicon.ico")
 async def favicon():
     return FileResponse(ROOT / "favicon.ico", media_type="image/x-icon")
